@@ -100,7 +100,7 @@ void app::run()
     ScreenInteractive screen = ScreenInteractive::Fullscreen();
 
     // Define loading UI
-    auto loading_renderer = Renderer([&] {
+    const auto loading_renderer = Renderer([&] {
         return vbox({
                    // Title
                    text("将軍") | center | bold,
@@ -115,8 +115,8 @@ void app::run()
     });
 
     // Define user input component and event handler
-    auto input_component = Input(&user_input, "英語");
-    auto input_with_enter = CatchEvent(input_component, [&](const Event &event) {
+    const auto input_component = Input(&user_input, "英語");
+    const auto input_with_enter = CatchEvent(input_component, [&](const Event &event) {
         // If not loading and the user presses Enter, check the answer
         if (event == Event::Return && !is_loading) {
 
@@ -156,7 +156,7 @@ void app::run()
     });
 
     // Main renderer for the main application screen
-    auto main_renderer = Renderer([&] {
+    const auto main_renderer = Renderer([&] {
         // If loading, render the loading screen
         if (is_loading) {
             return loading_renderer->Render();
@@ -196,7 +196,7 @@ void app::run()
             history_elements.emplace_back(text(" "));
         }
 
-        auto history_box = vbox(std::move(history_elements)) | border | size(WIDTH, EQUAL, 90) | center;
+        const auto history_box = vbox(std::move(history_elements)) | border | size(WIDTH, EQUAL, 90) | center;
 
         return vbox({
                    text("将軍") | center | bold,
@@ -236,11 +236,11 @@ void app::run()
     load_thread.detach();
 
     // Main loop with a container to handle focus
-    auto main_container = Container::Vertical({
+    const auto main_container = Container::Vertical({
         input_with_enter,
     });
 
-    auto main_app = Renderer(main_container, [&] {
+    const auto main_app = Renderer(main_container, [&] {
         return main_renderer->Render();
     });
 
