@@ -2,13 +2,14 @@
  * @file app.cpp
  */
 
-#include <atomic>   // for std::atomic
-#include <cstddef>  // for std::size_t
-#include <memory>   // for std::unique_ptr, std::make_unique
-#include <string>   // for std::string, std::to_string
-#include <thread>   // for std::thread
-#include <utility>  // for std::move
-#include <vector>   // for std::vector
+#include <atomic>     // for std::atomic
+#include <cstddef>    // for std::size_t
+#include <exception>  // for std::exception_ptr, std::rethrow_exception, std::exception, std::current_exception
+#include <memory>     // for std::unique_ptr, std::make_unique
+#include <string>     // for std::string, std::to_string
+#include <thread>     // for std::thread
+#include <utility>    // for std::move
+#include <vector>     // for std::vector
 
 #include "app.hpp"
 #include "core/filepaths.hpp"
@@ -93,6 +94,7 @@ void app::run()
     std::string user_input;
     std::vector<HistoryEntry> history;
     std::size_t history_counter = 1;
+    std::exception_ptr load_exception;  // Exception pointer to capture any exceptions
 
     // Define screen to be fullscreen
     ScreenInteractive screen = ScreenInteractive::Fullscreen();
@@ -160,6 +162,26 @@ void app::run()
             return loading_renderer->Render();
         }
 
+        // If an exception occurred, render the error screen
+        if (load_exception) {
+            try {
+                std::rethrow_exception(load_exception);
+            }
+            catch (const std::exception &e) {
+                return vbox({
+                           // Title
+                           text("将軍") | center | bold,
+                           separator(),
+                           // Error message, e.g., FileNotFoundError
+                           vbox({
+                               text(std::string(e.what())) | bold | center,
+                           }) |
+                               center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
+                       }) |
+                       border | bgcolor(Color::Red) | center;
+            }
+        }
+
         // Otherwise, render the main application screen
 
         // Create UI elements for the history dynamically
@@ -195,10 +217,16 @@ void app::run()
 
     // Run the loading thread
     std::thread load_thread([&]() {
-        // Load JSON file from disk
-        vocab = std::make_unique<io::kanji::Vocabulary>(core::filepaths::vocabulary);
-        // Get random entry from the vocabulary
-        current_entry = vocab->get_entry();
+        try {
+            // Load JSON file from disk
+            vocab = std::make_unique<io::kanji::Vocabulary>(core::filepaths::vocabulary);
+            // Get random entry from the vocabulary
+            current_entry = vocab->get_entry();
+        }
+        // Capture any exception, e.g., FileNotFoundError
+        catch (...) {
+            load_exception = std::current_exception();
+        }
         // Set loading flag to false and post a custom event to trigger the screen update
         is_loading = false;
         screen.PostEvent(Event::Custom);
