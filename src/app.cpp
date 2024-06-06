@@ -161,23 +161,19 @@ void app::run()
 
         // Otherwise, render the main application screen
 
-        // Copy the history vector to a new vector of Element objects
+        // Create UI elements for the history dynamically
         std::vector<Element> history_elements;
+        history_elements.reserve(5);  // Reserve space for 5 elements
         for (const auto &entry : history) {
-            history_elements.push_back(
+            history_elements.emplace_back(
                 text(std::to_string(entry.number) + ". " + entry.kanji + (core::globals::display_kana ? "（" + entry.kana + "）" : "") + "= " + entry.translation + " (" + entry.sentence_en + ")") |
                 color(entry.is_correct ? Color::Green : Color::Red));
         }
         while (history_elements.size() < 5) {
-            history_elements.push_back(text(" "));
+            history_elements.emplace_back(text(" "));
         }
 
-        auto history_box = vbox(history_elements) | border | size(WIDTH, EQUAL, 90) | center;
-
-        // If history is empty, display a message: nothing
-        if (history.empty()) {
-            history_box = text("履歴：なし") | center;
-        }
+        auto history_box = vbox(std::move(history_elements)) | border | size(WIDTH, EQUAL, 90) | center;
 
         return vbox({
                    text("将軍") | center | bold,
