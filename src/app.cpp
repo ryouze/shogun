@@ -4,9 +4,10 @@
 
 #include <atomic>   // for std::atomic
 #include <cstddef>  // for std::size_t
-#include <memory>   // for std::unique_ptr
+#include <memory>   // for std::unique_ptr, std::make_unique
 #include <string>   // for std::string, std::to_string
 #include <thread>   // for std::thread
+#include <utility>  // for std::move
 #include <vector>   // for std::vector
 
 #include "app.hpp"
@@ -15,9 +16,9 @@
 #include "io/kanji.hpp"
 #include "utils/string.hpp"
 
-#include <ftxui/component/component.hpp>           // for Component, CatchEvent, Input, Renderer, Container
-#include <ftxui/component/screen_interactive.hpp>  // for ScreenInteractive
-#include <ftxui/dom/elements.hpp>                  // for text, vbox, separator, border, size, center, bgcolor, bold, color, flex_grow
+#include <ftxui/component/component.hpp>
+#include <ftxui/component/screen_interactive.hpp>
+#include <ftxui/dom/elements.hpp>
 
 namespace {
 
