@@ -22,6 +22,13 @@ struct Entry {
     /**
      * @brief Construct a new Entry object.
      *
+     * This is the default constructor, which does not initialize any member variables.
+     */
+    Entry() = default;
+
+    /**
+     * @brief Construct a new Entry object.
+     *
      * @param _kanji Kanji (e.g., "三").
      * @param _kana Kana (e.g., "さん").
      * @param _translation English translation (e.g., "three").

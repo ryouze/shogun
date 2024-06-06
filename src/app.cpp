@@ -2,8 +2,11 @@
  * @file app.cpp
  */
 
+#include <atomic>   // for std::atomic
 #include <cstddef>  // for std::size_t
+#include <memory>   // for std::unique_ptr
 #include <string>   // for std::string, std::to_string
+#include <thread>   // for std::thread
 #include <vector>   // for std::vector
 
 #include "app.hpp"
@@ -82,25 +85,42 @@ void app::run()
 {
     using namespace ftxui;
 
+    // Initialize variables
+    std::atomic<bool> is_loading = true;           // Atomic allows for thread-safe access
+    std::unique_ptr<io::kanji::Vocabulary> vocab;  // Must be a pointer to allow for initialization in a separate thread
+    io::kanji::Entry current_entry;
     std::string user_input;
     std::vector<HistoryEntry> history;
     std::size_t history_counter = 1;
 
+    // Define screen to be fullscreen
     ScreenInteractive screen = ScreenInteractive::Fullscreen();
 
-    // Load JSON file from disk
-    auto vocab = io::kanji::Vocabulary(core::filepaths::vocabulary);
+    // Define loading UI
+    auto loading_renderer = Renderer([&] {
+        return vbox({
+                   // Title
+                   text("将軍") | center | bold,
+                   separator(),
+                   // Loading JSON: <filepath>
+                   vbox({
+                       text("Loading JSON: " + core::filepaths::vocabulary) | bold | center,
+                   }) |
+                       center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
+               }) |
+               border | bgcolor(Color::Grey11) | center;
+    });
 
-    // Get random entry from the vocabulary
-    auto current_entry = vocab.get_entry();
+    // Define user input component and event handler
+    auto input_component = Input(&user_input, "英語");
+    auto input_with_enter = CatchEvent(input_component, [&](const Event &event) {
+        // If not loading and the user presses Enter, check the answer
+        if (event == Event::Return && !is_loading) {
 
-    const auto input_component = Input(&user_input, "英語");
-
-    const auto input_with_enter = CatchEvent(input_component, [&](const Event &event) {
-        // If enter pressed, check if the user input is correct
-        if (event == Event::Return) {
+            // Check how similar the user's input is to the correct answer
             const double similarity = utils::string::calculate_similarity(user_input, current_entry.translation);
-            bool correct = similarity >= core::globals::min_similarity;  // 0.80
+            // If the similarity is above the threshold, mark the answer as correct
+            bool correct = similarity >= core::globals::min_similarity;
 
             // Fallback: If not correct, strip everything from the correct answer up to the first comma, then check again
             // This is useful when multiple translations are provided (e.g., "to eat, to drink"), we check against only the first translation (e.g., "to eat")
@@ -113,25 +133,35 @@ void app::run()
                 }
             }
 
-            // Create a new HistoryEntry object and insert it into the history vector
-            HistoryEntry newEntry(history_counter++, current_entry.kanji, current_entry.kana, current_entry.translation, current_entry.sentence_en, correct);
-            history.insert(history.begin(), newEntry);
+            // Insert the new history entry at the beginning of the history vector
+            history.emplace(history.begin(), history_counter++, current_entry.kanji, current_entry.kana, current_entry.translation, current_entry.sentence_en, correct);
 
+            // If the history vector is longer than 5 entries, remove the last entry to keep the history size at 5
             if (history.size() > 5) {
                 history.pop_back();
             }
+
+            // Clear the user's input
             user_input.clear();
-            current_entry = vocab.get_entry();
+
+            // Get a new random entry from the vocabulary
+            current_entry = vocab->get_entry();
             return true;
         }
+
         return false;
     });
 
-    const auto main_component = Container::Vertical({
-        input_with_enter,
-    });
+    // Main renderer for the main application screen
+    auto main_renderer = Renderer([&] {
+        // If loading, render the loading screen
+        if (is_loading) {
+            return loading_renderer->Render();
+        }
 
-    const auto main_renderer = Renderer(main_component, [&] {
+        // Otherwise, render the main application screen
+
+        // Copy the history vector to a new vector of Element objects
         std::vector<Element> history_elements;
         for (const auto &entry : history) {
             history_elements.push_back(
@@ -143,6 +173,8 @@ void app::run()
         }
 
         auto history_box = vbox(history_elements) | border | size(WIDTH, EQUAL, 90) | center;
+
+        // If history is empty, display a message: nothing
         if (history.empty()) {
             history_box = text("履歴：なし") | center;
         }
@@ -164,5 +196,28 @@ void app::run()
                border | bgcolor(Color::Grey11) | center;
     });
 
-    screen.Loop(main_renderer);
+    // Run the loading thread
+    std::thread load_thread([&]() {
+        // Load JSON file from disk
+        vocab = std::make_unique<io::kanji::Vocabulary>(core::filepaths::vocabulary);
+        // Get random entry from the vocabulary
+        current_entry = vocab->get_entry();
+        // Set loading flag to false and post a custom event to trigger the screen update
+        is_loading = false;
+        screen.PostEvent(Event::Custom);
+    });
+
+    // Detach the thread to avoid blocking
+    load_thread.detach();
+
+    // Main loop with a container to handle focus
+    auto main_container = Container::Vertical({
+        input_with_enter,
+    });
+
+    auto main_app = Renderer(main_container, [&] {
+        return main_renderer->Render();
+    });
+
+    screen.Loop(main_app);
 }
