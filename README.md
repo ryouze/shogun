@@ -17,6 +17,7 @@ Typing in the answers aligns more closely with my learning style. In fact, I've 
 ## Features
 
 - Written in modern C++ (C++17).
+- Multithreaded, with instant startups (<0.1s).
 - Comprehensive documentation with doxygen-style comments.
 - Automatic third-party dependency management using CMake's [FetchContent](https://www.foonathan.net/2022/06/cmake-fetchcontent/).
 - No missing STL headers thanks to [header-warden](https://github.com/ryouze/header-warden).
