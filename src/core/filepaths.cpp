@@ -21,12 +21,12 @@
 namespace {
 
 /**
- * @brief Base class for exceptions raised during file path operations.
+ * @brief Base class for exceptions raised during the retrieval of the executable path.
  */
-class PathError : public std::runtime_error {
+class ExecutablePathError : public std::runtime_error {
   public:
-    explicit PathError(const std::string &message)
-        : std::runtime_error("PathError: " + message) {}
+    explicit ExecutablePathError(const std::string &message)
+        : std::runtime_error("ExecutablePathError: " + message) {}
 };
 
 /**
@@ -40,22 +40,22 @@ class PathError : public std::runtime_error {
 
 #if defined(_WIN32)
     if (GetModuleFileNameA(NULL, buffer.data(), static_cast<DWORD>(buffer.size())) == 0) {
-        throw PathError("Failed to get the executable path");
+        throw ExecutablePathError("Failed to get the executable path");
     }
 #elif defined(__APPLE__)
     std::uint32_t size = static_cast<std::uint32_t>(buffer.size());
     if (_NSGetExecutablePath(buffer.data(), &size) != 0) {
-        throw PathError("Failed to get the executable path");
+        throw ExecutablePathError("Failed to get the executable path");
     }
     return std::filesystem::canonical(buffer.data());
 #elif defined(__linux__)
     const ssize_t count = readlink("/proc/self/exe", buffer.data(), buffer.size());
     if (count == -1) {
-        throw PathError("Failed to get the executable path");
+        throw ExecutablePathError("Failed to get the executable path");
     }
     buffer[static_cast<std::vector<char>::size_type>(count)] = '\0';
 #else
-    throw PathError("Failed to get the executable path, unsupported platform");
+    throw ExecutablePathError("Failed to get the executable path, unsupported platform");
 #endif
 
     return std::filesystem::canonical(buffer.data());
