@@ -102,7 +102,6 @@ All contributions are welcome.
 
 ## Credits
 
-- [cpplocate](https://github.com/cginternals/cpplocate)
 - [FTXUI](https://github.com/ArthurSonzogni/ftxui)
 - [json](https://github.com/nlohmann/json)
 
