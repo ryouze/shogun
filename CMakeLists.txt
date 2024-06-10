@@ -114,6 +114,7 @@ FetchContent_Declare(ftxui
 FetchContent_GetProperties(ftxui)
 if(NOT ftxui_POPULATED)
   FetchContent_Populate(ftxui)
+  file(REMOVE_RECURSE ${ftxui_SOURCE_DIR}/.git)  # Remove the .git directory to save space
   add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
