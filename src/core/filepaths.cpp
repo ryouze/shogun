@@ -53,7 +53,7 @@ class PathError : public std::runtime_error {
     if (count == -1) {
         throw PathError("Failed to get the executable path");
     }
-    buffer[count] = '\0';
+    buffer[static_cast<std::vector<char>::size_type>(count)] = '\0';
 #else
     throw PathError("Failed to get the executable path, unsupported platform");
 #endif
