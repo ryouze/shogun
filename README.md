@@ -31,7 +31,7 @@ The `src` directory is organized as follows:
 - `utils`: Contains utility functions that, while not as low-level as `core`, are used across different parts of the application.
 - `io`: Manages input/output operations.
 
-The `assets` directory contains the required `vocabulary.json` file used by the application. On configuration, CMake will automatically copy this file to the `build` directory. <!-- Installing the application will also copy the file to the appropriate directory. -->
+The `assets` directory contains the required `vocabulary.json` file used by the application. On configuration, CMake will automatically copy this file to the `build` directory. Installing the application will also copy the file to the appropriate directory (e.g., `/usr/local/bin`).
 
 
 ## Tested Systems
@@ -75,7 +75,7 @@ After successful compilation, you can run the program using `./shogun`.
 The mode is set to `Release` by default. To build in `Debug` mode, use `cmake -DCMAKE_BUILD_TYPE=Debug ..`.
 
 
-<!-- ## Install
+## Install
 
 If not already built, follow the steps in the [Build](#build) section and ensure that you are in the `build` directory.
 
@@ -85,8 +85,6 @@ To install the program, use the following command:
 sudo cmake --install .
 ```
 
-**Note:** Installing the program will also copy the required `vocabulary.json` file to the directory specified. This is automatic and no additional steps are required.
-
 
 ## Usage
 
@@ -94,7 +92,7 @@ To run the program, use the following command:
 
 ```bash
 shogun
-``` -->
+```
 
 
 ## Contributing

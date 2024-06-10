@@ -91,59 +91,34 @@ if(NOT WIN32)
   # endif()
 endif()
 
-# Setup dependency management, enable verbose mode, disable updates on every configure, warn on glob, set the download directory to "deps"
+# Setup dependency management, disable updates on every configure, set the download directory to "deps"
 include(FetchContent)
-set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
-cmake_policy(SET CMP0135 NEW)
 set(FETCHCONTENT_BASE_DIR ${CMAKE_SOURCE_DIR}/deps)
 message(STATUS "Setting up dependencies.")
-
-# Add cpplocate as a dependency
-# FetchContent_Declare(cpplocate
-#   URL https://github.com/cginternals/cpplocate/archive/refs/tags/v2.3.0.zip  # Choose the desired version from Releases
-# )
-message(STATUS "Setting up cpplocate...")
-FetchContent_Declare(cpplocate
-  GIT_REPOSITORY https://github.com/cginternals/cpplocate.git  # Get the full repository, because the releases are not up-to-date
-  GIT_TAG master
-  GIT_PROGRESS ON
-)
-FetchContent_MakeAvailable(cpplocate)
-execute_process(
-  COMMAND ${CMAKE_COMMAND} -E remove_directory "${cpplocate_SOURCE_DIR}/.git"
-  COMMENT "Removing \".git\" directory from cpplocate to save space"
-)
 
 # Add nlohmann_json as a dependency (disable implicit conversions)
 message(STATUS "Setting up nlohmann_json...")
 set(JSON_ImplicitConversions OFF)
-FetchContent_Declare(nlohmann_json
+FetchContent_Declare(json
   URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
-  EXCLUDE_FROM_ALL
-  FIND_PACKAGE_ARGS NAMES nlohmann_json
 )
-FetchContent_MakeAvailable(nlohmann_json)
+FetchContent_MakeAvailable(json)
 
 # Add ftxui as a dependency
 message(STATUS "Setting up ftxui...")
 FetchContent_Declare(ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
   GIT_TAG v5.0.0
-  GIT_PROGRESS ON
-  GIT_SHALLOW OFF
-  EXCLUDE_FROM_ALL
-  FIND_PACKAGE_ARGS NAMES ftxui
 )
-FetchContent_MakeAvailable(ftxui)
-execute_process(
-  COMMAND ${CMAKE_COMMAND} -E remove_directory "${ftxui_SOURCE_DIR}/.git"
-  COMMENT "Removing \".git\" directory from ftxui to save space"
-)
+FetchContent_GetProperties(ftxui)
+if(NOT ftxui_POPULATED)
+  FetchContent_Populate(ftxui)
+  add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 # Link the dependencies to the target
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE cpplocate::cpplocate
   PRIVATE ftxui::component
   PRIVATE ftxui::dom
   PRIVATE ftxui::screen
@@ -153,9 +128,9 @@ target_link_libraries(${PROJECT_NAME}
 # Copy the vocabulary JSON to the build directory
 configure_file(${CMAKE_SOURCE_DIR}/assets/vocabulary.json ${CMAKE_BINARY_DIR}/vocabulary.json COPYONLY)
 
-# # Add install target, copy the vocabulary JSON to the install directory
-# install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-# install(FILES ${CMAKE_SOURCE_DIR}/assets/vocabulary.json DESTINATION bin)
+# Add install target, copy the vocabulary JSON to the install directory
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES ${CMAKE_SOURCE_DIR}/assets/vocabulary.json DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Print the build type
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}.")
