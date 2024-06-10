@@ -39,6 +39,7 @@ The `assets` directory contains the required `vocabulary.json` file used by the 
 This project has been tested on the following systems:
 
 - MacOS 14.5 (Sonoma)
+- Manjaro 24.0 (Wynsdey)
 
 
 ## Requirements
