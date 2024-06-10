@@ -20,7 +20,7 @@ const bool display_kana = true;
 const bool display_answer = true;
 
 /**
- * @brief Minimum similarity between user input and the correct answer as a percentage (0-100).
+ * @brief Minimum similarity between user input and the correct answer as a percentage (0.0-1.0).
  */
 const double min_similarity = 0.6;
 

@@ -70,5 +70,5 @@ const std::filesystem::path root = get_executable_path().parent_path();
 
 }  // namespace
 
-const std::string core::filepaths::state = (root / "state.json").string();
+// const std::string core::filepaths::state = (root / "state.json").string();
 const std::string core::filepaths::vocabulary = (root / "vocabulary.json").string();
