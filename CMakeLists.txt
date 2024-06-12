@@ -97,8 +97,8 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 set(FETCHCONTENT_BASE_DIR ${CMAKE_SOURCE_DIR}/deps)
 message(STATUS "Setting up dependencies.")
 
-# Add nlohmann_json as a dependency (disable implicit conversions)
-message(STATUS "Setting up nlohmann_json...")
+# Add json as a dependency (disable implicit conversions)
+message(STATUS "Setting up json...")
 set(JSON_ImplicitConversions OFF)
 FetchContent_Declare(json
   URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
