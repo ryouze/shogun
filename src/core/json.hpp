@@ -86,6 +86,8 @@ class JsonParseError : public IOError {
  * @throws core::json::IsADirectoryError If the file is a directory.
  * @throws core::json::IOError If the file cannot be opened for reading or if any other I/O error occurs.
  * @throws core::json::JsonParseError If the file cannot be parsed as a JSON object.
+ *
+ * @note You can catch all exceptions listed above with core::json::IOError.
  */
 [[nodiscard]] Json load(const std::string &input_path);
 

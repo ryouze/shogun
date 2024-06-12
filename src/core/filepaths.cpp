@@ -33,6 +33,10 @@ class ExecutablePathError : public std::runtime_error {
  * @brief Helper function to get the path to the executable.
  *
  * @return Path to the executable (e.g., "~/GitHub/shogun/build/shogun").
+ *
+ * @throws ExecutablePathError If failed to get the executable path.
+ *
+ * @note This supports Windows, macOS, and Linux. Other platforms are not supported.
  */
 [[nodiscard]] std::filesystem::path get_executable_path()
 {
