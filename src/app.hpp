@@ -7,11 +7,12 @@
 #pragma once
 
 #include <stdexcept>  // for std::runtime_error
+#include <string>     // for std::string
 
 namespace app {
 
 /**
- * @brief Base class for exceptions raised command-line argument parsing. A help message with usage, description, and examples is included.
+ * @brief Base class for exceptions raised by command-line argument parser. A help message with usage, description, and examples must be included.
  */
 class ArgParseError : public std::runtime_error {
   public:
