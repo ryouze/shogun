@@ -17,6 +17,7 @@
 #include "io/kanji.hpp"
 #include "utils/string.hpp"
 
+#include <argparse/argparse.hpp>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
@@ -81,11 +82,54 @@ struct HistoryEntry {
     bool is_correct;
 };
 
+/**
+ * @brief Process command-line arguments.
+ *
+ * @param argc Number of command-line arguments (e.g., "2").
+ * @param argv Array of command-line arguments (e.g., {"./bin", "-h"}).
+ *
+ * @throws ArgParseError If failed to process command-line arguments. A help message with usage, description, and examples is returned.
+ */
+void process_args(const int argc, char **argv)
+{
+    // Setup command-line argument parser (disable version and enable help only)
+    argparse::ArgumentParser program("shogun", "", argparse::default_arguments::help);
+    program.add_description("Learn Japanese kanji in the terminal.");
+
+    // If "--kana" argument was passed, enable display of the kana transcriptions of the kanji
+    program.add_argument("--kana")
+        .help("display the kana transcription of the kanji")
+        .store_into(core::globals::display_kana);
+
+    // If "--answer" argument was passed, enable display of the correct answer
+    program.add_argument("--answer")
+        .help("display the correct answer")
+        .store_into(core::globals::display_answer);
+
+    // // If "--debug" argument was passed, enable debug mode
+    // program.add_argument("--debug")
+    //     .store_into(core::globals::debug)
+    //     .hidden();
+
+    try {
+        // Parse command-line arguments
+        program.parse_args(argc, argv);
+    }
+    catch (const std::exception &err) {
+        // Re-throw the exception as an ArgParseError with the help message
+        throw app::ArgParseError(std::string(err.what()) + "\n\n" + program.help().str());
+    }
+}
+
 }  // namespace
 
-void app::run()
+void app::run(const int argc, char **argv)
 {
+    // Use ftxui namespace because we're using a lot of ftxui components
     using namespace ftxui;
+
+    // Process command-line arguments (this might throw a ArgParseError or ArgParseHelp)
+    process_args(argc, argv);
 
     // Initialize variables
     std::atomic<bool> is_loading = true;           // Atomic allows for thread-safe access

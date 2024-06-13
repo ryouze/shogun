@@ -12,15 +12,15 @@ namespace globals {
 /**
  * @brief Display the kana transcription of the kanji.
  */
-const bool display_kana = true;
+bool display_kana = true;
 
 /**
  * @brief Display the correct answer.
  */
-const bool display_answer = true;
+bool display_answer = true;
 
 /**
- * @brief Minimum similarity between user input and the correct answer as a percentage (0.0-1.0).
+ * @brief Minimum similarity between user input and the correct answer as a percentage (0.0 - 1.0).
  */
 const double min_similarity = 0.6;
 

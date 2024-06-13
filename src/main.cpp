@@ -12,14 +12,18 @@
 
 /**
  * @brief Entry-point of the application.
+ *
+ * @param argc Number of command-line arguments (e.g., "2").
+ * @param argv Array of command-line arguments (e.g., {"./bin", "-h"}).
  */
-int main()
+int main(int argc, char **argv)
 {
     // Disable synchronization between the C++ standard streams (e.g., std::cin, std::cout) and their corresponding C equivalents
     std::ios_base::sync_with_stdio(false);
 
     try {
-        app::run();
+        // Parse command-line arguments, load the vocabulary JSON file from disk and start the interactive UI
+        app::run(argc, argv);
     }
     catch (const std::exception &e) {
         std::cerr << std::string(e.what()) + '\n';
