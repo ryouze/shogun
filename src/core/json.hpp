@@ -39,14 +39,14 @@ class FileNotFoundError : public IOError {
         : IOError("FileNotFoundError: " + message) {}
 };
 
-/**
- * @brief Raised when a file already exists.
- */
-class FileExistsError : public IOError {
-  public:
-    explicit FileExistsError(const std::string &message)
-        : IOError("FileExistsError: " + message) {}
-};
+// /**
+//  * @brief Raised when a file already exists.
+//  */
+// class FileExistsError : public IOError {
+//   public:
+//     explicit FileExistsError(const std::string &message)
+//         : IOError("FileExistsError: " + message) {}
+// };
 
 /**
  * @brief Raised when a file is a directory.
