@@ -97,19 +97,18 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 set(FETCHCONTENT_BASE_DIR ${CMAKE_SOURCE_DIR}/deps)
 message(STATUS "Setting up dependencies.")
 
-# Add json as a dependency (disable implicit conversions)
-message(STATUS "Setting up json...")
-set(JSON_ImplicitConversions OFF)
-FetchContent_Declare(json
-  URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+# Add argparse as a dependency
+include(FetchContent)
+FetchContent_Declare(argparse
+    GIT_REPOSITORY https://github.com/p-ranav/argparse.git
 )
-FetchContent_MakeAvailable(json)
+FetchContent_MakeAvailable(argparse)
 
 # Add ftxui as a dependency
 message(STATUS "Setting up ftxui...")
 FetchContent_Declare(ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
-  GIT_TAG v5.0.0
+  GIT_TAG        v5.0.0
 )
 FetchContent_GetProperties(ftxui)
 if(NOT ftxui_POPULATED)
@@ -118,8 +117,17 @@ if(NOT ftxui_POPULATED)
   add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
+# Add json as a dependency (disable implicit conversions)
+message(STATUS "Setting up json...")
+set(JSON_ImplicitConversions OFF)
+FetchContent_Declare(json
+  URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+)
+FetchContent_MakeAvailable(json)
+
 # Link the dependencies to the target
 target_link_libraries(${PROJECT_NAME}
+  PRIVATE argparse
   PRIVATE ftxui::component
   PRIVATE ftxui::dom
   PRIVATE ftxui::screen
