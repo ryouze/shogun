@@ -110,13 +110,15 @@ file(REMOVE_RECURSE ${argparse_SOURCE_DIR}/.git)
 # Add ftxui as a dependency, remove the .git directory to save space
 message(STATUS "Setting up ftxui...")
 FetchContent_Declare(ftxui
-  GIT_REPOSITORY    https://github.com/ArthurSonzogni/ftxui
-  GIT_TAG           v5.0.0
-  FIND_PACKAGE_ARGS NAMES ftxui
-  EXCLUDE_FROM_ALL
+  GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
+  GIT_TAG        v5.0.0
 )
-FetchContent_MakeAvailable(ftxui)
-file(REMOVE_RECURSE ${ftxui_SOURCE_DIR}/.git)
+FetchContent_GetProperties(ftxui)  # FetchContent_MakeAvailable will not install properly
+if(NOT ftxui_POPULATED)
+  FetchContent_Populate(ftxui)
+  file(REMOVE_RECURSE ${ftxui_SOURCE_DIR}/.git)
+  add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 # Add json as a dependency (disable implicit conversions)
 message(STATUS "Setting up json...")
