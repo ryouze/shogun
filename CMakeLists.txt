@@ -1,4 +1,4 @@
-# Set minimum required version of CMake (v3.24 is required for FIND_PACKAGE_ARGS)
+# Set minimum required version of CMake
 cmake_minimum_required(VERSION 3.24)
 
 # Set project name and language
@@ -101,7 +101,6 @@ message(STATUS "Setting up dependencies.")
 message(STATUS "Setting up argparse...")
 FetchContent_Declare(argparse
   GIT_REPOSITORY    https://github.com/p-ranav/argparse.git
-  FIND_PACKAGE_ARGS NAMES argparse
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(argparse)
@@ -121,11 +120,10 @@ if(NOT ftxui_POPULATED)
 endif()
 
 # Add json as a dependency (disable implicit conversions)
-message(STATUS "Setting up json...")
+message(STATUS "Setting up nlohmann_json...")
 set(JSON_ImplicitConversions OFF)
 FetchContent_Declare(nlohmann_json
   URL               https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
-  FIND_PACKAGE_ARGS NAMES nlohmann_json
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(nlohmann_json)
