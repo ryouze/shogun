@@ -95,6 +95,18 @@ To run the program, use the following command:
 shogun
 ```
 
+If the kana (`--kana`) flag is provided, the program displays the kana transcription of the kanji. It is disabled by default, because the program is designed for kanji learning and the kana transcription is displayed in the example sentence anyway.
+
+```bash
+shogun --kana
+```
+
+If the answer (`--answer`) flag is provided, the program displays the correct answer. This is useful for exploring the vocabulary.
+
+```bash
+shogun --answer
+```
+
 
 ## Contributing
 
@@ -103,9 +115,9 @@ All contributions are welcome.
 
 ## Credits
 
+- [argparse](https://github.com/p-ranav/argparse)
 - [FTXUI](https://github.com/ArthurSonzogni/ftxui)
 - [json](https://github.com/nlohmann/json)
-
 
 ## License
 
