@@ -121,6 +121,39 @@ void process_args(const int argc, char **argv)
     }
 }
 
+/**
+ * @brief Check if the user's input is similar enough to the correct answer based on the global similarity threshold.
+ *
+ * @param user_input User's input (e.g., "to eat").
+ * @param correct_answer Correct answer (e.g., "to eat").
+ *
+ * @return True if the input matches the correct answer, otherwise false.
+ *
+ * @note If the initial check fails, the function will retry by stripping the correct answer up to the first comma and comparing again (e.g., "to eat, to drink" -> "to eat").
+ */
+[[nodiscard]] bool is_answer_correct(const std::string &user_input,
+                                     const std::string &correct_answer)
+{
+    // Calculate the similarity between the user's input and the correct answer using the Levenshtein distance
+    const double similarity = utils::string::calculate_similarity(user_input, correct_answer);
+
+    // If the similarity is above the threshold, mark the answer as correct
+    bool correct = similarity >= core::globals::min_similarity;
+
+    // Fallback: If not correct, strip everything from the correct answer up to the first comma and check again
+    // This is useful when multiple translations are provided (e.g., "to eat, to drink"); we only check the first translation (e.g., "to eat")
+    if (!correct) {
+        const std::size_t comma_pos = correct_answer.find(',');
+        if (comma_pos != std::string::npos) {
+            const std::string stripped_translation = correct_answer.substr(0, comma_pos);
+            const double stripped_similarity = utils::string::calculate_similarity(user_input, stripped_translation);
+            correct = stripped_similarity >= core::globals::min_similarity;
+        }
+    }
+
+    return correct;
+}
+
 }  // namespace
 
 void app::run(const int argc, char **argv)
@@ -164,21 +197,8 @@ void app::run(const int argc, char **argv)
         // If not loading and the user presses Enter, check the answer
         if (event == Event::Return && !is_loading) {
 
-            // Check how similar the user's input is to the correct answer
-            const double similarity = utils::string::calculate_similarity(user_input, current_entry.translation);
-            // If the similarity is above the threshold, mark the answer as correct
-            bool correct = similarity >= core::globals::min_similarity;
-
-            // Fallback: If not correct, strip everything from the correct answer up to the first comma, then check again
-            // This is useful when multiple translations are provided (e.g., "to eat, to drink"), we check against only the first translation (e.g., "to eat")
-            if (!correct) {
-                const std::size_t comma_pos = current_entry.translation.find(',');
-                if (comma_pos != std::string::npos) {
-                    const std::string stripped_translation = current_entry.translation.substr(0, comma_pos);
-                    const double stripped_similarity = utils::string::calculate_similarity(user_input, stripped_translation);
-                    correct = stripped_similarity >= core::globals::min_similarity;
-                }
-            }
+            // Check if the user's input is correct, with fallback to the first translation if multiple translations are provided
+            const bool correct = is_answer_correct(user_input, current_entry.translation);
 
             // Insert the new history entry at the beginning of the history vector
             history.emplace(history.begin(), history_counter++, current_entry.kanji, current_entry.kana, current_entry.translation, current_entry.sentence_en, correct);
