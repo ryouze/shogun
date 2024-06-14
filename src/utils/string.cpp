@@ -13,6 +13,34 @@
 namespace {
 
 /**
+ * @brief Remove leading and trailing whitespace from string.
+ *
+ * @param str String to trim (e.g., "  hello  ").
+ *
+ * @return Trimmed string (e.g., "hello").
+ */
+[[nodiscard]] std::string trim_whitespace(const std::string &str)
+{
+
+    // Find the first non-whitespace character in the string
+    const auto start_pos = str.find_first_not_of(" \t\n\r\f\v");
+
+    // If the string is all whitespace, return an empty string
+    if (start_pos == std::string::npos) {
+        return "";
+    }
+
+    // Find the last non-whitespace character in the string
+    const auto end_pos = str.find_last_not_of(" \t\n\r\f\v");
+
+    // Remove leading and trailing whitespace
+    const std::string trimmed_str = str.substr(start_pos, end_pos - start_pos + 1);
+
+    // Return the trimmed string (RVO)
+    return trimmed_str;
+}
+
+/**
  * @brief Private helper function to convert a string to lowercase.
  *
  * @param str String to convert to lowercase (e.g., "Hello World").
@@ -38,9 +66,9 @@ namespace {
 double utils::string::calculate_similarity(const std::string &str1,
                                            const std::string &str2)
 {
-    // Convert both input strings to lowercase for case-insensitive comparison
-    const std::string str1_lower = to_lower(str1);
-    const std::string str2_lower = to_lower(str2);
+    // Remove trailing whitespace and turn lowercase for case-insensitive comparison
+    const std::string str1_lower = to_lower(trim_whitespace(str1));
+    const std::string str2_lower = to_lower(trim_whitespace(str2));
 
     // Get the lengths of the lowercase strings
     const std::size_t str1_lower_len = str1_lower.size();
