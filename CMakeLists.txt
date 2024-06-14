@@ -98,7 +98,7 @@ set(FETCHCONTENT_BASE_DIR ${CMAKE_SOURCE_DIR}/deps)
 message(STATUS "Setting up dependencies.")
 
 # Add argparse as a dependency
-include(FetchContent)
+message(STATUS "Setting up argparse...")
 FetchContent_Declare(argparse
     GIT_REPOSITORY https://github.com/p-ranav/argparse.git
 )
@@ -133,6 +133,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE ftxui::screen
   PRIVATE nlohmann_json::nlohmann_json
 )
+message(STATUS "All dependencies set up.")
 
 # Copy the vocabulary JSON to the build directory
 configure_file(${CMAKE_SOURCE_DIR}/assets/vocabulary.json ${CMAKE_BINARY_DIR}/vocabulary.json COPYONLY)
