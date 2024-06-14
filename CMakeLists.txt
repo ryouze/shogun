@@ -1,4 +1,4 @@
-# Set minimum required version of CMake
+# Set minimum required version of CMake (v3.24 is required for FIND_PACKAGE_ARGS)
 cmake_minimum_required(VERSION 3.24)
 
 # Set project name and language
@@ -97,33 +97,36 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 set(FETCHCONTENT_BASE_DIR ${CMAKE_SOURCE_DIR}/deps)
 message(STATUS "Setting up dependencies.")
 
-# Add argparse as a dependency
+# Add argparse as a dependency, remove the .git directory to save space
 message(STATUS "Setting up argparse...")
 FetchContent_Declare(argparse
-    GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+  GIT_REPOSITORY    https://github.com/p-ranav/argparse.git
+  FIND_PACKAGE_ARGS NAMES argparse
+  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(argparse)
+file(REMOVE_RECURSE ${argparse_SOURCE_DIR}/.git)
 
-# Add ftxui as a dependency
+# Add ftxui as a dependency, remove the .git directory to save space
 message(STATUS "Setting up ftxui...")
 FetchContent_Declare(ftxui
-  GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
-  GIT_TAG        v5.0.0
+  GIT_REPOSITORY    https://github.com/ArthurSonzogni/ftxui
+  GIT_TAG           v5.0.0
+  FIND_PACKAGE_ARGS NAMES ftxui
+  EXCLUDE_FROM_ALL
 )
-FetchContent_GetProperties(ftxui)
-if(NOT ftxui_POPULATED)
-  FetchContent_Populate(ftxui)
-  file(REMOVE_RECURSE ${ftxui_SOURCE_DIR}/.git)  # Remove the .git directory to save space
-  add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
+FetchContent_MakeAvailable(ftxui)
+file(REMOVE_RECURSE ${ftxui_SOURCE_DIR}/.git)
 
 # Add json as a dependency (disable implicit conversions)
 message(STATUS "Setting up json...")
 set(JSON_ImplicitConversions OFF)
-FetchContent_Declare(json
-  URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+FetchContent_Declare(nlohmann_json
+  URL               https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+  FIND_PACKAGE_ARGS NAMES nlohmann_json
+  EXCLUDE_FROM_ALL
 )
-FetchContent_MakeAvailable(json)
+FetchContent_MakeAvailable(nlohmann_json)
 
 # Link the dependencies to the target
 target_link_libraries(${PROJECT_NAME}
