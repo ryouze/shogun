@@ -22,7 +22,7 @@ bool display_answer = true;
 /**
  * @brief Minimum similarity between user input and the correct answer as a percentage (0.0 - 1.0).
  */
-const double min_similarity = 0.6;
+constexpr double min_similarity = 0.6;
 
 }  // namespace globals
 }  // namespace core
