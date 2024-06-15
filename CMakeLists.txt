@@ -112,7 +112,6 @@ FetchContent_Declare(ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
   GIT_TAG        v5.0.0
 )
-FetchContent_GetProperties(ftxui)  # FetchContent_MakeAvailable will not install properly
 if(NOT ftxui_POPULATED)
   FetchContent_Populate(ftxui)
   file(REMOVE_RECURSE ${ftxui_SOURCE_DIR}/.git)
