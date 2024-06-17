@@ -127,6 +127,15 @@ FetchContent_Declare(nlohmann_json
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
+# Add pathmaster as a dependency
+message(STATUS "Setting up pathmaster...")
+FetchContent_Declare(pathmaster
+    GIT_REPOSITORY https://github.com/ryouze/pathmaster.git
+    GIT_TAG        main
+    EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(pathmaster)
+
 # Link the dependencies to the target
 target_link_libraries(${PROJECT_NAME}
   PRIVATE argparse
@@ -134,6 +143,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE ftxui::dom
   PRIVATE ftxui::screen
   PRIVATE nlohmann_json::nlohmann_json
+  PRIVATE pathmaster
 )
 message(STATUS "All dependencies set up.")
 
