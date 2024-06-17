@@ -97,7 +97,7 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 set(FETCHCONTENT_BASE_DIR ${CMAKE_SOURCE_DIR}/deps)
 message(STATUS "Setting up dependencies.")
 
-# Add argparse as a dependency, remove the .git directory to save space
+# Add argparse as a dependency
 message(STATUS "Setting up argparse...")
 FetchContent_Declare(argparse
   GIT_REPOSITORY    https://github.com/p-ranav/argparse.git
@@ -106,12 +106,13 @@ FetchContent_Declare(argparse
 FetchContent_MakeAvailable(argparse)
 file(REMOVE_RECURSE ${argparse_SOURCE_DIR}/.git)
 
-# Add ftxui as a dependency, remove the .git directory to save space
+# Add ftxui as a dependency
 message(STATUS "Setting up ftxui...")
 FetchContent_Declare(ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
   GIT_TAG        v5.0.0
 )
+FetchContent_GetProperties(ftxui)
 if(NOT ftxui_POPULATED)
   FetchContent_Populate(ftxui)
   file(REMOVE_RECURSE ${ftxui_SOURCE_DIR}/.git)
@@ -122,7 +123,7 @@ endif()
 message(STATUS "Setting up nlohmann_json...")
 set(JSON_ImplicitConversions OFF)
 FetchContent_Declare(nlohmann_json
-  URL               https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+  URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(nlohmann_json)
@@ -135,6 +136,7 @@ FetchContent_Declare(pathmaster
     EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(pathmaster)
+file(REMOVE_RECURSE ${pathmaster_SOURCE_DIR}/.git)
 
 # Link the dependencies to the target
 target_link_libraries(${PROJECT_NAME}
