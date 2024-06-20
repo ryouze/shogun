@@ -2,7 +2,7 @@
  * @file main.cpp
  */
 
-#include <cstdlib>    // for std::exit, EXIT_FAILURE
+#include <cstdlib>    // for EXIT_FAILURE
 #include <exception>  // for std::exception
 #include <ios>        // for std::ios_base
 #include <iostream>   // for std::cerr
@@ -27,11 +27,11 @@ int main(int argc, char **argv)
     }
     catch (const std::exception &e) {
         std::cerr << std::string(e.what()) + '\n';
-        std::exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
     catch (...) {
         std::cerr << "Unknown error\n";
-        std::exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
     return 0;
 }
