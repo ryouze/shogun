@@ -2,9 +2,12 @@
  * @file filepaths.cpp
  */
 
-#include "filepaths.hpp"
+#include <filesystem>  // for std::filesystem
+#include <string>      // for std::string
 
 #include <pathmaster/pathmaster.hpp>
+
+#include "filepaths.hpp"
 
 namespace {
 

@@ -11,16 +11,16 @@
 #include <utility>    // for std::move
 #include <vector>     // for std::vector
 
+#include <argparse/argparse.hpp>
+#include <ftxui/component/component.hpp>
+#include <ftxui/component/screen_interactive.hpp>
+#include <ftxui/dom/elements.hpp>
+
 #include "app.hpp"
 #include "core/filepaths.hpp"
 #include "core/globals.hpp"
 #include "io/kanji.hpp"
 #include "utils/string.hpp"
-
-#include <argparse/argparse.hpp>
-#include <ftxui/component/component.hpp>
-#include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/dom/elements.hpp>
 
 namespace {
 
