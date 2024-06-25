@@ -161,7 +161,7 @@ void app::run(const int argc, char **argv)
     // Use ftxui namespace because we're using a lot of ftxui components
     using namespace ftxui;
 
-    // Process command-line arguments (this might throw a ArgParseError or ArgParseHelp)
+    // Process command-line arguments (this might throw a ArgParseError)
     process_args(argc, argv);
 
     // Initialize variables
