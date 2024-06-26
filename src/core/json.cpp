@@ -15,10 +15,6 @@ core::json::Json core::json::load(const std::string &input_path)
     if (!std::filesystem::exists(input_path)) {
         throw core::json::FileNotFoundError(input_path);
     }
-    // Error: Is a directory
-    else if (std::filesystem::is_directory(input_path)) {
-        throw core::json::IsADirectoryError(input_path);
-    }
     try {
         // Open the file in read mode
         std::ifstream file(input_path);
@@ -48,10 +44,6 @@ core::json::Json core::json::load(const std::string &input_path)
 //     // -> If overwrite is true, we can overwrite the file, keep going
 //     if (!overwrite && std::filesystem::exists(output_path)) {
 //         throw core::json::FileExistsError(output_path);
-//     }
-//     // Error: Is a directory
-//     else if (std::filesystem::is_directory(output_path)) {
-//         throw core::json::IsADirectoryError(output_path);
 //     }
 //     try {
 //         // Open the file in write mode

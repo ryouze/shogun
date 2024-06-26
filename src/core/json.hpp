@@ -48,15 +48,6 @@ class FileNotFoundError : public IOError {
 //         : IOError("FileExistsError: " + message) {}
 // };
 
-/**
- * @brief Raised when a file is a directory.
- */
-class IsADirectoryError : public IOError {
-  public:
-    explicit IsADirectoryError(const std::string &message)
-        : IOError("IsADirectoryError: " + message) {}
-};
-
 // /**
 //  * @brief Raised when a file cannot be accessed due to permission errors.
 //  */
@@ -83,7 +74,6 @@ class JsonParseError : public IOError {
  * @return JSON object.
  *
  * @throws core::json::FileNotFoundError If the file does not exist.
- * @throws core::json::IsADirectoryError If the file is a directory.
  * @throws core::json::IOError If the file cannot be opened for reading or if any other I/O error occurs.
  * @throws core::json::JsonParseError If the file cannot be parsed as a JSON object.
  *
@@ -99,7 +89,6 @@ class JsonParseError : public IOError {
 //  * @param overwrite Overwrite the file if it already exists (default: false).
 //  *
 //  * @throws core::json::FileExistsError If overwrite is false and the file already exists.
-//  * @throws core::json::IsADirectoryError If the output path is a directory.
 //  * @throws core::json::IOError If the file cannot be opened for writing or if any other I/O error occurs.
 //  * @throws core::json::JsonParseError If the JSON object cannot be serialized.
 //  */
