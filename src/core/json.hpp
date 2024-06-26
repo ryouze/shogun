@@ -48,15 +48,6 @@ class FileNotFoundError : public IOError {
 //         : IOError("FileExistsError: " + message) {}
 // };
 
-// /**
-//  * @brief Raised when a file cannot be accessed due to permission errors.
-//  */
-// class PermissionError : public IOError {
-//   public:
-//     explicit PermissionError(const std::string &message)
-//         : IOError("PermissionError: " + message) {}
-// };
-
 /**
  * @brief Raised when a JSON file cannot be parsed.
  */
