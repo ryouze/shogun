@@ -65,8 +65,8 @@ class JsonParseError : public IOError {
  * @return JSON object.
  *
  * @throws core::json::FileNotFoundError If the file does not exist.
- * @throws core::json::IOError If the file cannot be opened for reading or if any other I/O error occurs.
  * @throws core::json::JsonParseError If the file cannot be parsed as a JSON object.
+ * @throws core::json::IOError If the file cannot be opened for reading or if any other I/O error occurs.
  *
  * @note You can catch all exceptions listed above with core::json::IOError.
  */
@@ -80,8 +80,8 @@ class JsonParseError : public IOError {
 //  * @param overwrite Overwrite the file if it already exists (default: false).
 //  *
 //  * @throws core::json::FileExistsError If overwrite is false and the file already exists.
-//  * @throws core::json::IOError If the file cannot be opened for writing or if any other I/O error occurs.
 //  * @throws core::json::JsonParseError If the JSON object cannot be serialized.
+//  * @throws core::json::IOError If the file cannot be opened for writing or if any other I/O error occurs.
 //  */
 // void save(const Json &data,
 //           const std::string &output_path,
