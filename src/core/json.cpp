@@ -5,6 +5,7 @@
 #include <exception>   // for std::exception
 #include <filesystem>  // for std::filesystem
 #include <fstream>     // for std::ifstream
+#include <stdexcept>   // for std::runtime_error
 #include <string>      // for std::string
 
 #include "json.hpp"
@@ -21,7 +22,7 @@ core::json::Json core::json::load(const std::string &input_path)
 
         // Error: File cannot be opened
         if (!file) {
-            throw core::json::IOError(input_path);
+            throw std::runtime_error("Failed to open file for reading");
         }
 
         // Return the parsed JSON
@@ -51,7 +52,7 @@ core::json::Json core::json::load(const std::string &input_path)
 
 //         // Error: File cannot be opened
 //         if (!file) {
-//             throw core::json::IOError(output_path);
+//             throw std::runtime_error("Failed to open file for writing");
 //         }
 
 //         // Write the JSON object to the file with 4 spaces indentation and trailing newline
