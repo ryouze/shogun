@@ -17,25 +17,23 @@ core::json::Json core::json::load(const std::string &input_path)
         throw core::json::FileNotFoundError(input_path);
     }
     // Otherwise, load the file
-    else {
-        try {
-            // Open the file in read mode
-            std::ifstream file(input_path);
+    try {
+        // Open the file in read mode
+        std::ifstream file(input_path);
 
-            // Error: File cannot be opened
-            if (!file) {
-                throw std::runtime_error("Failed to open file for reading");
-            }
+        // Error: File cannot be opened
+        if (!file) {
+            throw std::runtime_error("Failed to open file for reading");
+        }
 
-            // Return the parsed JSON
-            return core::json::Json::parse(file);
-        }
-        catch (const core::json::Json::exception &e) {
-            throw core::json::JsonParseError(input_path + " (" + std::string(e.what()) + ")");
-        }
-        catch (const std::exception &e) {
-            throw core::json::IOError(input_path + " (" + std::string(e.what()) + ")");
-        }
+        // Return the parsed JSON
+        return core::json::Json::parse(file);
+    }
+    catch (const core::json::Json::exception &e) {
+        throw core::json::JsonParseError(input_path + " (" + std::string(e.what()) + ")");
+    }
+    catch (const std::exception &e) {
+        throw core::json::IOError(input_path + " (" + std::string(e.what()) + ")");
     }
 }
 
