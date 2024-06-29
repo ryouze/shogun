@@ -2,11 +2,12 @@
  * @file string.cpp
  */
 
-#include <algorithm>  // for std::transform, std::min, std::swap, std::max
-#include <cctype>     // for std::tolower
-#include <cstddef>    // for std::size_t
-#include <string>     // for std::string
-#include <vector>     // for std::vector
+#include <algorithm>    // for std::transform, std::min, std::swap, std::max
+#include <cctype>       // for std::tolower
+#include <cstddef>      // for std::size_t
+#include <string>       // for std::string
+#include <string_view>  // for std::string_view
+#include <vector>       // for std::vector
 
 #include "string.hpp"
 
@@ -21,9 +22,11 @@ namespace {
  */
 [[nodiscard]] std::string trim_whitespace(const std::string &str)
 {
+    // Define the whitespace characters to remove
+    static constexpr std::string_view whitespace = " \t\n\r\f\v";
 
     // Find the first non-whitespace character in the string
-    const std::size_t start_pos = str.find_first_not_of(" \t\n\r\f\v");
+    const std::size_t start_pos = str.find_first_not_of(whitespace);
 
     // If the string is all whitespace, return an empty string
     if (start_pos == std::string::npos) {
@@ -31,7 +34,7 @@ namespace {
     }
 
     // Find the last non-whitespace character in the string
-    const std::size_t end_pos = str.find_last_not_of(" \t\n\r\f\v");
+    const std::size_t end_pos = str.find_last_not_of(whitespace);
 
     // Return string without leading and trailing whitespace
     return str.substr(start_pos, end_pos - start_pos + 1);
