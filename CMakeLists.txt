@@ -100,22 +100,22 @@ message(STATUS "Setting up dependencies.")
 # Add argparse as a dependency
 message(STATUS "Setting up argparse...")
 FetchContent_Declare(argparse
-  GIT_REPOSITORY    https://github.com/p-ranav/argparse.git
+  GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+  GIT_SHALLOW    TRUE
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(argparse)
-file(REMOVE_RECURSE ${argparse_SOURCE_DIR}/.git)
 
 # Add ftxui as a dependency
 message(STATUS "Setting up ftxui...")
 FetchContent_Declare(ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
   GIT_TAG        v5.0.0
+  GIT_SHALLOW    TRUE
 )
 FetchContent_GetProperties(ftxui)
 if(NOT ftxui_POPULATED)
   FetchContent_Populate(ftxui)
-  file(REMOVE_RECURSE ${ftxui_SOURCE_DIR}/.git)
   add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
@@ -132,11 +132,10 @@ FetchContent_MakeAvailable(nlohmann_json)
 message(STATUS "Setting up pathmaster...")
 FetchContent_Declare(pathmaster
     GIT_REPOSITORY https://github.com/ryouze/pathmaster.git
-    GIT_TAG        main
+    GIT_SHALLOW    TRUE
     EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(pathmaster)
-file(REMOVE_RECURSE ${pathmaster_SOURCE_DIR}/.git)
 
 # Link the dependencies to the target
 target_link_libraries(${PROJECT_NAME}
