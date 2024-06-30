@@ -84,8 +84,10 @@ struct Entry {
  * @brief Class that represents a vocabulary of Japanese kanji.
  *
  * On construction, the class loads and randomly shuffles a JSON file containing Japanese vocabulary from disk.
+ *
+ * @note This class is marked as `final` to prevent inheritance.
  */
-class Vocabulary {
+class Vocabulary final {
   public:
     /**
      * @brief Construct a new Vocabulary object.
