@@ -13,6 +13,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Link statically (if on Windows)
+if(WIN32)
+  set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-static")
+endif()
+
 # Require out-of-source builds
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "In-source builds not allowed. Please make a separate build directory and run CMake from there.")
@@ -91,9 +96,10 @@ if(NOT WIN32)
   # endif()
 endif()
 
-# Setup dependency management, disable updates on every configure, set the download directory to "deps"
+# Setup dependency management, disable updates on every configure, disale quiet mode, set the download directory to "deps"
 include(FetchContent)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_BASE_DIR ${CMAKE_SOURCE_DIR}/deps)
 message(STATUS "Setting up dependencies.")
 
@@ -101,6 +107,7 @@ message(STATUS "Setting up dependencies.")
 message(STATUS "Setting up argparse...")
 FetchContent_Declare(argparse
   GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+  GIT_PROGRESS   TRUE
   GIT_SHALLOW    TRUE
   EXCLUDE_FROM_ALL
 )
@@ -109,15 +116,13 @@ FetchContent_MakeAvailable(argparse)
 # Add ftxui as a dependency
 message(STATUS "Setting up ftxui...")
 FetchContent_Declare(ftxui
-  GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
+  GIT_REPOSITORY https://github.com/arthursonzogni/ftxui.git
   GIT_TAG        v5.0.0
+  GIT_PROGRESS   TRUE
   GIT_SHALLOW    TRUE
+  EXCLUDE_FROM_ALL
 )
-FetchContent_GetProperties(ftxui)
-if(NOT ftxui_POPULATED)
-  FetchContent_Populate(ftxui)
-  add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
+FetchContent_MakeAvailable(ftxui)
 
 # Add json as a dependency (disable implicit conversions)
 message(STATUS "Setting up nlohmann_json...")
@@ -132,6 +137,8 @@ FetchContent_MakeAvailable(nlohmann_json)
 message(STATUS "Setting up pathmaster...")
 FetchContent_Declare(pathmaster
     GIT_REPOSITORY https://github.com/ryouze/pathmaster.git
+    GIT_TAG        main  # CMake uses "master" by default
+    GIT_PROGRESS   TRUE
     GIT_SHALLOW    TRUE
     EXCLUDE_FROM_ALL
 )
