@@ -48,8 +48,8 @@ core::json::Json core::json::load(const std::string &input_path)
 //         throw core::json::FileExistsError(output_path);
 //     }
 //     try {
-//         // Open the file in write mode
-//         std::ofstream file(output_path);
+//         // Open the file in write mode, truncating the file if it already exists
+//         std::ofstream file(output_path, std::ios::out | std::ios::trunc);
 
 //         // Error: File cannot be opened
 //         if (!file) {
