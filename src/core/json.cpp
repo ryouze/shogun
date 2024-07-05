@@ -48,8 +48,8 @@ core::json::Json core::json::load(const std::string &input_path)
 //         throw core::json::FileExistsError(output_path);
 //     }
 //     try {
-//         // Open the file in write mode, truncating the file if it already exists
-//         std::ofstream file(output_path, std::ios::out | std::ios::trunc);
+//         // Open the file in write mode
+//         std::ofstream file(output_path);
 
 //         // Error: File cannot be opened
 //         if (!file) {
@@ -58,6 +58,11 @@ core::json::Json core::json::load(const std::string &input_path)
 
 //         // Write the JSON object to the file with 4 spaces indentation and trailing newline
 //         file << data.dump(4) << '\n';
+
+//         // Error: Failed to write JSON
+//         if (file.fail()) {
+//             throw std::runtime_error("Failed to write JSON to file");
+//         }
 //     }
 //     catch (const core::json::Json::exception &e) {
 //         throw core::json::JsonParseError(output_path + " (" + std::string(e.what()) + ")");
