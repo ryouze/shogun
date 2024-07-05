@@ -85,9 +85,10 @@ class JsonParseError : public IOError {
 //  *
 //  * @note You can catch all exceptions listed above with core::json::IOError.
 //  */
-// void save(const Json &data,
-//           const std::string &output_path,
-//           const bool overwrite = false);
+// void save(
+//     const Json &data,
+//     const std::string &output_path,
+//     const bool overwrite = false);
 
 }  // namespace json
 }  // namespace core

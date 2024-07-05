@@ -18,7 +18,9 @@
  *
  * @return EXIT_SUCCESS if the application ran successfully, EXIT_FAILURE otherwise.
  */
-int main(int argc, char **argv)
+int main(
+    int argc,
+    char **argv)
 {
     // Disable synchronization between the C++ standard streams (e.g., std::cin, std::cout) and their corresponding C equivalents
     std::ios_base::sync_with_stdio(false);

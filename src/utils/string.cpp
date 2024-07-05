@@ -63,8 +63,9 @@ namespace {
 
 }  // namespace
 
-double utils::string::calculate_similarity(const std::string &str1,
-                                           const std::string &str2)
+double utils::string::calculate_similarity(
+    const std::string &str1,
+    const std::string &str2)
 {
     // Remove trailing whitespace and turn lowercase for case-insensitive comparison
     const std::string str1_lower = to_lower(trim_whitespace(str1));

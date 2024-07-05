@@ -37,12 +37,13 @@ struct HistoryEntry {
      * @param _sentence_en English sentence (e.g., "She's the mother of three children.").
      * @param _is_correct Whether the user's input was correct (e.g., "true").
      */
-    explicit HistoryEntry(const std::size_t _number,
-                          const std::string &_kanji,
-                          const std::string &_kana,
-                          const std::string &_translation,
-                          const std::string &_sentence_en,
-                          const bool _is_correct)
+    explicit HistoryEntry(
+        const std::size_t _number,
+        const std::string &_kanji,
+        const std::string &_kana,
+        const std::string &_translation,
+        const std::string &_sentence_en,
+        const bool _is_correct)
         : number(_number),
           kanji(_kanji),
           kana(_kana),
@@ -108,7 +109,9 @@ struct Args {
  *
  * @throws ArgParseError If failed to process command-line arguments. A help message with usage, description, and examples is returned.
  */
-[[nodiscard]] Args process_args(const int argc, char **argv)
+[[nodiscard]] Args process_args(
+    const int argc,
+    char **argv)
 {
     // Initialize arguments
     Args args;
@@ -154,9 +157,10 @@ struct Args {
  *
  * @note If the initial check fails, the function will retry by stripping the correct answer up to the first comma and comparing again (e.g., "to eat, to drink" -> "to eat").
  */
-[[nodiscard]] bool is_answer_correct(const std::string &user_input,
-                                     const std::string &correct_answer,
-                                     const double min_similarity = 0.6)
+[[nodiscard]] bool is_answer_correct(
+    const std::string &user_input,
+    const std::string &correct_answer,
+    const double min_similarity = 0.6)
 {
     // Calculate the similarity between the user's input and the correct answer using the Levenshtein distance
     const double similarity = utils::string::calculate_similarity(user_input, correct_answer);
@@ -180,7 +184,9 @@ struct Args {
 
 }  // namespace
 
-void app::run(const int argc, char **argv)
+void app::run(
+    const int argc,
+    char **argv)
 {
     // Use ftxui namespace because we're using a lot of ftxui components
     using namespace ftxui;

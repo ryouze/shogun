@@ -28,6 +28,8 @@ class ArgParseError : public std::runtime_error {
  *
  * @note Exceptions thrown by the JSON library (e.g., FileNotFoundError) are caught and displayed inside the UI loop.
  */
-void run(const int argc, char **argv);
+void run(
+    const int argc,
+    char **argv);
 
 }  // namespace app

@@ -13,16 +13,6 @@
 namespace {
 
 /**
- * @brief Private helper random device used to seed the Mersenne Twister random number generator.
- */
-std::random_device rd;
-
-/**
- * @brief Private helper Mersenne Twister random number generator (32-bit).
- */
-std::mt19937 gen(rd());
-
-/**
  * @brief Private helper function to load a JSON file containing Japanese vocabulary from disk.
  *
  * @param input_path Path to the JSON file (e.g., "~/data.json").
@@ -30,28 +20,36 @@ std::mt19937 gen(rd());
  *
  * @return Vector of Entry objects.
  */
-[[nodiscard]] std::vector<io::kanji::Entry> load_vocabulary(const std::string &input_path,
-                                                            const bool shuffle = true)
+[[nodiscard]] std::vector<io::kanji::Entry> load_vocabulary(
+    const std::string &input_path,
+    const bool shuffle = true)
 {
-    // Load the JSON file from disk, passing any Exceptions to the caller
-    const core::json::Json data = core::json::load(input_path);
-
-    // Convert JSON to a vector of Entry objects
+    // Initialize vector of Entry objects
     std::vector<io::kanji::Entry> entries;
-    for (auto &[key, value] : data.items()) {
 
-        // Add the Entry object to the vector
-        entries.emplace_back(io::kanji::Entry(
-            key,  // Kanji
-            value["kana"].get<std::string>(),
-            value["translation"].template get<std::string>(),
-            value["sentence_jp"].template get<std::string>(),
-            value["sentence_en"].template get<std::string>(),
-            value["pos"].template get<std::string>()));
-    }
+    {
+        // Load the JSON file from disk, passing any Exceptions to the caller
+        const core::json::Json data = core::json::load(input_path);
 
+        // Convert JSON to a vector of Entry objects
+
+        for (auto &[key, value] : data.items()) {
+
+            // Add the Entry object to the vector
+            entries.emplace_back(io::kanji::Entry(
+                key,  // Kanji
+                value["kana"].get<std::string>(),
+                value["translation"].template get<std::string>(),
+                value["sentence_jp"].template get<std::string>(),
+                value["sentence_en"].template get<std::string>(),
+                value["pos"].template get<std::string>()));
+        }
+    }  // Deallocate the JSON object
+
+    // If enabled, shuffle the data in random order
     if (shuffle) {
-        // Shuffle the data in random order
+        std::random_device rd;
+        std::mt19937 gen(rd());  // Mersenne Twister random number generator (32-bit)
         std::shuffle(entries.begin(), entries.end(), gen);
     }
 

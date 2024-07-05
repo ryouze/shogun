@@ -36,12 +36,13 @@ struct Entry {
      * @param _sentence_en English sentence (e.g., "She's the mother of three children.").
      * @param _pos Part of speech (e.g., "Noun").
      */
-    explicit Entry(const std::string &_kanji,
-                   const std::string &_kana,
-                   const std::string &_translation,
-                   const std::string &_sentence_jp,
-                   const std::string &_sentence_en,
-                   const std::string &_pos)
+    explicit Entry(
+        const std::string &_kanji,
+        const std::string &_kana,
+        const std::string &_translation,
+        const std::string &_sentence_jp,
+        const std::string &_sentence_en,
+        const std::string &_pos)
         : kanji(_kanji),
           kana(_kana),
           translation(_translation),

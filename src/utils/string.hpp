@@ -21,8 +21,9 @@ namespace string {
  *
  * @note Trailing whitespace will be removed and strings will be converted to lowercase before comparison.
  */
-[[nodiscard]] double calculate_similarity(const std::string &str1,
-                                          const std::string &str2);
+[[nodiscard]] double calculate_similarity(
+    const std::string &str1,
+    const std::string &str2);
 
 }  // namespace string
 }  // namespace utils
