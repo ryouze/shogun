@@ -18,7 +18,6 @@
 
 #include "app.hpp"
 #include "core/filepaths.hpp"
-#include "core/globals.hpp"
 #include "io/kanji.hpp"
 #include "utils/string.hpp"
 
@@ -83,15 +82,37 @@ struct HistoryEntry {
 };
 
 /**
- * @brief Process command-line arguments.
+ * @brief Private helper struct that represents command-line arguments.
+ *
+ * @note These values shall be set by the command-line argument parser.
+ */
+struct Args {
+    /**
+     * @brief Display the kana transcription of the kanji (e.g., "true").
+     */
+    bool display_kana;
+
+    /**
+     * @brief Display the correct answer (e.g., "true").
+     */
+    bool display_answer;
+};
+
+/**
+ * @brief Process command-line arguments and return them as a struct.
  *
  * @param argc Number of command-line arguments (e.g., "2").
  * @param argv Array of command-line arguments (e.g., {"./bin", "-h"}).
  *
+ * @return Parsed command-line arguments.
+ *
  * @throws ArgParseError If failed to process command-line arguments. A help message with usage, description, and examples is returned.
  */
-void process_args(const int argc, char **argv)
+[[nodiscard]] Args process_args(const int argc, char **argv)
 {
+    // Initialize arguments
+    Args args;
+
     // Setup command-line argument parser (disable version and enable help only)
     argparse::ArgumentParser program("shogun", "", argparse::default_arguments::help);
     program.add_description("Learn Japanese kanji in the terminal.");
@@ -99,21 +120,22 @@ void process_args(const int argc, char **argv)
     // If "--kana" argument was passed, enable display of the kana transcriptions of the kanji
     program.add_argument("--kana")
         .help("display the kana transcription of the kanji")
-        .store_into(core::globals::display_kana);
+        .store_into(args.display_kana);
 
     // If "--answer" argument was passed, enable display of the correct answer
     program.add_argument("--answer")
         .help("display the correct answer")
-        .store_into(core::globals::display_answer);
+        .store_into(args.display_answer);
 
     // // If "--debug" argument was passed, enable debug mode
     // program.add_argument("--debug")
-    //     .store_into(core::globals::debug)
+    //     .store_into(args.debug)
     //     .hidden();
 
     try {
         // Parse command-line arguments
         program.parse_args(argc, argv);
+        return args;
     }
     catch (const std::exception &err) {
         // Re-throw the exception as an ArgParseError with the help message
@@ -126,19 +148,21 @@ void process_args(const int argc, char **argv)
  *
  * @param user_input User's input (e.g., "to eat").
  * @param correct_answer Correct answer (e.g., "to eat").
+ * @param min_similarity Minimum similarity between user input and correct answer as a percentage (0.0 - 1.0).
  *
  * @return True if the input matches the correct answer, otherwise false.
  *
  * @note If the initial check fails, the function will retry by stripping the correct answer up to the first comma and comparing again (e.g., "to eat, to drink" -> "to eat").
  */
 [[nodiscard]] bool is_answer_correct(const std::string &user_input,
-                                     const std::string &correct_answer)
+                                     const std::string &correct_answer,
+                                     const double min_similarity = 0.6)
 {
     // Calculate the similarity between the user's input and the correct answer using the Levenshtein distance
     const double similarity = utils::string::calculate_similarity(user_input, correct_answer);
 
     // If the similarity is above the threshold, mark the answer as correct
-    bool correct = similarity >= core::globals::min_similarity;
+    bool correct = similarity >= min_similarity;
 
     // Fallback: If not correct, strip everything from the correct answer up to the first comma and check again
     // This is useful when multiple translations are provided (e.g., "to eat, to drink"); we only check the first translation (e.g., "to eat")
@@ -147,7 +171,7 @@ void process_args(const int argc, char **argv)
         if (comma_pos != std::string::npos) {
             const std::string stripped_translation = correct_answer.substr(0, comma_pos);
             const double stripped_similarity = utils::string::calculate_similarity(user_input, stripped_translation);
-            correct = stripped_similarity >= core::globals::min_similarity;
+            correct = stripped_similarity >= min_similarity;
         }
     }
 
@@ -162,7 +186,7 @@ void app::run(const int argc, char **argv)
     using namespace ftxui;
 
     // Process command-line arguments (this might throw a ArgParseError)
-    process_args(argc, argv);
+    const Args args = process_args(argc, argv);
 
     // Initialize variables
     std::atomic<bool> is_loading = true;           // Atomic allows for thread-safe access
@@ -253,7 +277,7 @@ void app::run(const int argc, char **argv)
         history_elements.reserve(5);  // Reserve space for 5 elements
         for (const auto &entry : history) {
             history_elements.emplace_back(
-                text(std::to_string(entry.number) + ". " + entry.kanji + (core::globals::display_kana ? "（" + entry.kana + "）" : "") + "= " + entry.translation + " (" + entry.sentence_en + ")") |
+                text(std::to_string(entry.number) + ". " + entry.kanji + (args.display_kana ? "（" + entry.kana + "）" : "") + "= " + entry.translation + " (" + entry.sentence_en + ")") |
                 color(entry.is_correct ? Color::Green : Color::Red));
         }
         while (history_elements.size() < 5) {
@@ -266,7 +290,7 @@ void app::run(const int argc, char **argv)
                    text("将軍") | center | bold,
                    separator(),
                    vbox({
-                       text("漢字：" + current_entry.kanji + (core::globals::display_kana ? "（" + current_entry.kana + "）" : "") + (core::globals::display_answer ? "= " + current_entry.translation + "" : "")) | bold | size(WIDTH, EQUAL, 90),
+                       text("漢字：" + current_entry.kanji + (args.display_kana ? "（" + current_entry.kana + "）" : "") + (args.display_answer ? "= " + current_entry.translation + "" : "")) | bold | size(WIDTH, EQUAL, 90),
                        text("例文：" + current_entry.sentence_jp) | bold | size(WIDTH, EQUAL, 90),
                        text("POS: " + current_entry.pos) | bold | size(WIDTH, EQUAL, 90),
                        input_with_enter->Render() | border | color(Color::Red),
