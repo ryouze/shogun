@@ -281,63 +281,67 @@ void app::run(
 
     // Main renderer for the main application screen
     const auto main_renderer = Renderer([&] {
-        // If loading, render the loading screen
-        if (is_loading) {
-            return loading_renderer->Render();
-        }
+                                   // If loading, render the loading screen
+                                   if (is_loading) {
+                                       // If an exception occurred, render the error screen
+                                       if (load_exception) {
+                                           try {
+                                               std::rethrow_exception(load_exception);
+                                           }
+                                           catch (const std::exception &e) {
+                                               return vbox({
+                                                          // Title
+                                                          text("将軍") | center | bold,
+                                                          separator(),
+                                                          // Error message, e.g., FileNotFoundError
+                                                          vbox({
+                                                              text(std::string(e.what())) | bold | center,
+                                                          }) |
+                                                              center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
+                                                      }) |
+                                                      border | bgcolor(Color::Red) | center;
+                                           }
+                                       }
+                                       // Otherwise, render the loading screen
+                                       else {
+                                           return loading_renderer->Render();
+                                       }
+                                   }
 
-        // If an exception occurred, render the error screen
-        if (load_exception) {
-            try {
-                std::rethrow_exception(load_exception);
-            }
-            catch (const std::exception &e) {
-                return vbox({
-                           // Title
-                           text("将軍") | center | bold,
-                           separator(),
-                           // Error message, e.g., FileNotFoundError
-                           vbox({
-                               text(std::string(e.what())) | bold | center,
-                           }) |
-                               center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
-                       }) |
-                       border | bgcolor(Color::Red) | center;
-            }
-        }
+                                   // Otherwise, render the main application screen
 
-        // Otherwise, render the main application screen
+                                   // Create UI elements for the history dynamically
+                                   std::vector<Element> history_elements;
+                                   history_elements.reserve(5);  // Reserve space for 5 elements
+                                   for (const auto &entry : history) {
+                                       history_elements.emplace_back(
+                                           text(std::to_string(entry.number) + ". " + entry.kanji + "（" + entry.kana + "）" + "= " + entry.translation + " (" + entry.sentence_en + ")") |
+                                           color(entry.is_correct ? Color::Green : Color::Red));
+                                   }
+                                   while (history_elements.size() < 5) {
+                                       history_elements.emplace_back(text(" "));
+                                   }
 
-        // Create UI elements for the history dynamically
-        std::vector<Element> history_elements;
-        history_elements.reserve(5);  // Reserve space for 5 elements
-        for (const auto &entry : history) {
-            history_elements.emplace_back(
-                text(std::to_string(entry.number) + ". " + entry.kanji + "（" + entry.kana + "）" + "= " + entry.translation + " (" + entry.sentence_en + ")") |
-                color(entry.is_correct ? Color::Green : Color::Red));
-        }
-        while (history_elements.size() < 5) {
-            history_elements.emplace_back(text(" "));
-        }
+                                   const auto history_box = vbox(std::move(history_elements)) | border | size(WIDTH, EQUAL, 90) | center;
 
-        const auto history_box = vbox(std::move(history_elements)) | border | size(WIDTH, EQUAL, 90) | center;
-
-        return vbox({
-                   text("将軍") | center | bold,
-                   separator(),
-                   vbox({
-                       text("漢字：" + current_entry.kanji + (display_kana ? "（" + current_entry.kana + "）" : "") + (display_answer ? "= " + current_entry.translation + "" : "")) | bold | size(WIDTH, EQUAL, 90),
-                       text("例文：" + current_entry.sentence_jp) | bold | size(WIDTH, EQUAL, 90),
-                       text("POS: " + current_entry.pos) | bold | size(WIDTH, EQUAL, 90),
-                       input_with_enter->Render() | border | color(Color::Red),
-                   }) | border |
-                       center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
-                   separator(),
-                   text("履歴") | bold | center,
-                   history_box,
-               }) |
-               border | bgcolor(Color::Grey11) | center;
-    });
+                                   return vbox({
+                                              text("将軍") | center | bold,
+                                              separator(),
+                                              vbox({
+                                                  text("漢字：" + current_entry.kanji + (display_kana ? "（" + current_entry.kana + "）" : "") + (display_answer ? "= " + current_entry.translation + "" : "")) | bold | size(WIDTH, EQUAL, 90),
+                                                  text("例文：" + current_entry.sentence_jp) | bold | size(WIDTH, EQUAL, 90),
+                                                  text("POS: " + current_entry.pos) | bold | size(WIDTH, EQUAL, 90),
+                                                  input_with_enter->Render() | border | color(Color::Red),
+                                              }) | border |
+                                                  center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
+                                              separator(),
+                                              text("履歴") | bold | center,
+                                              history_box,
+                                          }) |
+                                          border | bgcolor(Color::Grey11) | center;
+                               }) |
+                               bgcolor(
+                                   LinearGradient(Color::Pink1, Color::SkyBlue1));
 
     // Run the loading thread
     std::thread load_thread([&]() {
@@ -346,13 +350,14 @@ void app::run(
             vocab = std::make_unique<io::kanji::Vocabulary>(core::filepaths::vocabulary);
             // Get random entry from the vocabulary
             current_entry = vocab->get_entry();
+            is_loading = false;
         }
         // Capture any exception, e.g., FileNotFoundError
         catch (...) {
             load_exception = std::current_exception();
         }
         // Set loading flag to false and post a custom event to trigger the screen update
-        is_loading = false;
+
         screen.PostEvent(Event::Custom);
     });
 
