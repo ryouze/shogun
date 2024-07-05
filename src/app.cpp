@@ -235,16 +235,9 @@ void app::run(
         // If the help hint is displayed, disable it, and reset it to preferred user settings (stored in args)
         // If the hint is not displayed, enable it, ignoring the user settings
         else if (event == Event::Tab) {
-            if (help_hint) {
-                display_kana = args.display_kana;
-                display_answer = args.display_answer;
-                help_hint = false;
-            }
-            else {
-                display_kana = true;
-                display_answer = true;
-                help_hint = true;
-            }
+            display_kana = help_hint ? args.display_kana : true;
+            display_answer = help_hint ? args.display_answer : true;
+            help_hint = !help_hint;
             return true;
         }
         // If user presses Enter, check the answer
