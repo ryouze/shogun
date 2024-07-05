@@ -197,11 +197,11 @@ void app::run(
     // Initialize variables
     std::atomic<bool> is_loading = true;           // Atomic allows for thread-safe access
     std::unique_ptr<io::kanji::Vocabulary> vocab;  // Must be a pointer to allow for initialization in a separate thread
+    std::exception_ptr load_exception;             // Exception pointer to capture any exceptions thrown during loading of vocab
     io::kanji::Entry current_entry;
     std::string user_input;
     std::vector<HistoryEntry> history;
     std::size_t history_counter = 1;
-    std::exception_ptr load_exception;  // Exception pointer to capture any exceptions
 
     // Define screen to be fullscreen
     ScreenInteractive screen = ScreenInteractive::Fullscreen();
