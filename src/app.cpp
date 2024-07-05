@@ -313,7 +313,7 @@ void app::run(
         history_elements.reserve(5);  // Reserve space for 5 elements
         for (const auto &entry : history) {
             history_elements.emplace_back(
-                text(std::to_string(entry.number) + ". " + entry.kanji + (args.display_kana ? "（" + entry.kana + "）" : "") + "= " + entry.translation + " (" + entry.sentence_en + ")") |
+                text(std::to_string(entry.number) + ". " + entry.kanji + "（" + entry.kana + "）" + "= " + entry.translation + " (" + entry.sentence_en + ")") |
                 color(entry.is_correct ? Color::Green : Color::Red));
         }
         while (history_elements.size() < 5) {
