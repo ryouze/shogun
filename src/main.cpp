@@ -2,7 +2,7 @@
  * @file main.cpp
  */
 
-#include <cstdlib>    // for EXIT_FAILURE
+#include <cstdlib>    // for EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>  // for std::exception
 #include <ios>        // for std::ios_base
 #include <iostream>   // for std::cerr
@@ -15,6 +15,8 @@
  *
  * @param argc Number of command-line arguments (e.g., "2").
  * @param argv Array of command-line arguments (e.g., {"./bin", "-h"}).
+ *
+ * @return EXIT_SUCCESS if the application ran successfully, EXIT_FAILURE otherwise.
  */
 int main(int argc, char **argv)
 {
@@ -33,5 +35,5 @@ int main(int argc, char **argv)
         std::cerr << "Unknown error\n";
         return EXIT_FAILURE;
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
