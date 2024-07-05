@@ -68,7 +68,7 @@ Follow these steps to build the project:
 
 3. **Compile the project**:
     ```bash
-    make -j
+    make
     ```
 
 After successful compilation, you can run the program using `./shogun`.
