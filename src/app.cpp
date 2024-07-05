@@ -202,6 +202,9 @@ void app::run(
     std::string user_input;
     std::vector<HistoryEntry> history;
     std::size_t history_counter = 1;
+    bool display_kana = args.display_kana;
+    bool display_answer = args.display_answer;
+    bool help_hint = false;
 
     // Define screen to be fullscreen
     ScreenInteractive screen = ScreenInteractive::Fullscreen();
@@ -224,8 +227,28 @@ void app::run(
     // Define user input component and event handler
     const auto input_component = Input(&user_input, "英語");
     const auto input_with_enter = CatchEvent(input_component, [&](const Event &event) {
-        // If not loading and the user presses Enter, check the answer
-        if (event == Event::Return && !is_loading) {
+        // If loading, do nothing
+        if (is_loading) {
+            return false;
+        }
+        // If user presses tab, toggle showing the kana and answer
+        // If the help hint is displayed, disable it, and reset it to preferred user settings (stored in args)
+        // If the hint is not displayed, enable it, ignoring the user settings
+        else if (event == Event::Tab) {
+            if (help_hint) {
+                display_kana = args.display_kana;
+                display_answer = args.display_answer;
+                help_hint = false;
+            }
+            else {
+                display_kana = true;
+                display_answer = true;
+                help_hint = true;
+            }
+            return true;
+        }
+        // If user presses Enter, check the answer
+        else if (event == Event::Return) {
 
             // Check if the user's input is correct, with fallback to the first translation if multiple translations are provided
             const bool correct = is_answer_correct(user_input, current_entry.translation);
@@ -241,12 +264,19 @@ void app::run(
             // Clear the user's input
             user_input.clear();
 
+            // Reset kana and answer to preferred user settings
+            display_kana = args.display_kana;
+            display_answer = args.display_answer;
+            help_hint = false;
+
             // Get a new random entry from the vocabulary
             current_entry = vocab->get_entry();
             return true;
         }
-
-        return false;
+        // Otherwise, do nothing
+        else {
+            return false;
+        }
     });
 
     // Main renderer for the main application screen
@@ -296,7 +326,7 @@ void app::run(
                    text("将軍") | center | bold,
                    separator(),
                    vbox({
-                       text("漢字：" + current_entry.kanji + (args.display_kana ? "（" + current_entry.kana + "）" : "") + (args.display_answer ? "= " + current_entry.translation + "" : "")) | bold | size(WIDTH, EQUAL, 90),
+                       text("漢字：" + current_entry.kanji + (display_kana ? "（" + current_entry.kana + "）" : "") + (display_answer ? "= " + current_entry.translation + "" : "")) | bold | size(WIDTH, EQUAL, 90),
                        text("例文：" + current_entry.sentence_jp) | bold | size(WIDTH, EQUAL, 90),
                        text("POS: " + current_entry.pos) | bold | size(WIDTH, EQUAL, 90),
                        input_with_enter->Render() | border | color(Color::Red),
