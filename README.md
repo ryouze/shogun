@@ -95,7 +95,7 @@ To run the program, use the following command:
 shogun
 ```
 
-If the `Tab` key is pressed, the program will display a hint - the kana transcription and the correct answer. This will be disabled for the next question. Use it when you're stuck.
+While running, the `Tab` key can be used to display a hint. The first time it is pressed, the program will display the kana transcription of the kanji. The second time, it will display the correct answer. If a flag (see below) is provided, the hint will respect the flag.
 
 If the kana (`--kana`) flag is provided, the program displays the kana transcription of the kanji. It is disabled by default, because the program is designed for kanji learning and the kana transcription is displayed in the example sentence anyway.
 
