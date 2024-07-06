@@ -240,28 +240,23 @@ void app::run(
         }
         // If user presses tab, toggle between off, showing kana, showing both kana and answer
         else if (event == Event::Tab) {
-            if (help_hint == HintState::Off) {
+            switch (help_hint) {
+            case HintState::Off:  // Off -> Partial
                 help_hint = HintState::Partial;
                 display_kana = true;
                 display_answer = args.display_answer;  // User preference
-            }
-            else if (help_hint == HintState::Partial) {
+                break;
+            case HintState::Partial:  // Partial -> Full
                 help_hint = HintState::Full;
                 display_kana = true;
                 display_answer = true;
-            }
-            else {
+                break;
+            case HintState::Full:  // Full -> Off
                 help_hint = HintState::Off;
                 display_kana = args.display_kana;      // User preference
                 display_answer = args.display_answer;  // User preference
+                break;
             }
-
-            // } else {
-            //     help_hint = HintState::Off;
-            // }
-            // display_kana = help_hint ? args.display_kana : true;
-            // display_answer = help_hint ? args.display_answer : true;
-            // help_hint = !help_hint;
             return true;
         }
         // If user presses Enter, check the answer
