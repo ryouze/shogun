@@ -273,6 +273,7 @@ void app::run(
     });
 
     // Main renderer for the main application screen
+    const auto main_renderer_background = LinearGradient(Color::Pink1, Color::SkyBlue1);
     const auto main_renderer = Renderer([&] {
                                    // If loading, render the loading screen
                                    if (is_loading) {
@@ -333,8 +334,7 @@ void app::run(
                                           }) |
                                           border | bgcolor(Color::Grey11) | center;
                                }) |
-                               bgcolor(
-                                   LinearGradient(Color::Pink1, Color::SkyBlue1));
+                               bgcolor(main_renderer_background) | color(Color::Pink1);
 
     // Run the loading thread
     std::thread load_thread([&]() {
