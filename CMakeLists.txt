@@ -105,6 +105,7 @@ FetchContent_Declare(argparse
   GIT_PROGRESS   TRUE
   GIT_SHALLOW    TRUE
   EXCLUDE_FROM_ALL
+  FIND_PACKAGE_ARGS NAMES argparse  # Use installed if available
 )
 FetchContent_MakeAvailable(argparse)
 
@@ -116,6 +117,7 @@ FetchContent_Declare(ftxui
   GIT_PROGRESS   TRUE
   GIT_SHALLOW    TRUE
   EXCLUDE_FROM_ALL
+  FIND_PACKAGE_ARGS NAMES ftxui  # Use installed if available
 )
 FetchContent_MakeAvailable(ftxui)
 
@@ -125,6 +127,7 @@ set(JSON_ImplicitConversions OFF)
 FetchContent_Declare(nlohmann_json
   URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
   EXCLUDE_FROM_ALL
+  FIND_PACKAGE_ARGS NAMES nlohmann_json  # Use installed if available
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
@@ -136,6 +139,7 @@ FetchContent_Declare(pathmaster
     GIT_PROGRESS   TRUE
     GIT_SHALLOW    TRUE
     EXCLUDE_FROM_ALL
+    FIND_PACKAGE_ARGS NAMES pathmaster  # Use installed if available
 )
 FetchContent_MakeAvailable(pathmaster)
 
