@@ -71,6 +71,16 @@ Follow these steps to build the project:
     make
     ```
 
+    To use all available cores with `make`, pass the `-j` flag with the number of cores available on your system:
+    ```bash
+    # MacOS
+    make -j$(sysctl -n hw.ncpu)
+    ```
+    ```bash
+    # GNU/Linux
+    make -j$(nproc)
+    ```
+
 After successful compilation, you can run the program using `./shogun`.
 
 The mode is set to `Release` by default. To build in `Debug` mode, use `cmake -DCMAKE_BUILD_TYPE=Debug ..`.
