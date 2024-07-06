@@ -97,13 +97,27 @@ shogun
 
 While running, the `Tab` key can be used to display a hint. The first time it is pressed, the program will display the kana transcription of the kanji. The second time, it will display the correct answer. If a flag (see below) is provided, the hint will respect the flag.
 
+## Flags
+
+```bash
+[~] $ shogun --help
+Usage: shogun [--help] [--kana] [--answer]
+
+Learn Japanese kanji in the terminal.
+
+Optional arguments:
+  -h, --help  shows help message and exits
+  --kana      display the kana transcription of the kanji
+  --answer    display the correct answer
+```
+
 If the kana (`--kana`) flag is provided, the program displays the kana transcription of the kanji. It is disabled by default, because the program is designed for kanji learning and the kana transcription is displayed in the example sentence anyway.
 
 ```bash
 shogun --kana
 ```
 
-If the answer (`--answer`) flag is provided, the program displays the correct answer. This is useful for exploring the vocabulary.
+If the answer (`--answer`) flag is provided, the program displays the correct answer. This is useful for exploring the vocabulary or debugging.
 
 ```bash
 shogun --answer
