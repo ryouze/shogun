@@ -324,7 +324,7 @@ void app::run(
                                                   text("漢字：" + current_entry.kanji + (display_kana ? "（" + current_entry.kana + "）" : "") + (display_answer ? "= " + current_entry.translation + "" : "")) | bold | size(WIDTH, EQUAL, 90),
                                                   text("例文：" + current_entry.sentence_jp) | bold | size(WIDTH, EQUAL, 90),
                                                   text("POS: " + current_entry.pos) | bold | size(WIDTH, EQUAL, 90),
-                                                  input_with_enter->Render() | border | color(Color::Red),
+                                                  input_with_enter->Render() | bold | bgcolor(Color::Magenta) | border,
                                               }) | border |
                                                   center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
                                               separator(),
