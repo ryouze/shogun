@@ -202,9 +202,16 @@ void app::run(
     std::string user_input;
     std::vector<HistoryEntry> history;
     std::size_t history_counter = 1;
+
+    // Initialize hint flags
     bool display_kana = args.display_kana;
     bool display_answer = args.display_answer;
-    bool help_hint = false;
+    enum class HintState {
+        Off,      // No hint
+        Partial,  // Kana only
+        Full      // Kana and answer
+    };
+    HintState help_hint = HintState::Off;
 
     // Define screen to be fullscreen
     ScreenInteractive screen = ScreenInteractive::Fullscreen();
@@ -231,13 +238,30 @@ void app::run(
         if (is_loading) {
             return false;
         }
-        // If user presses tab, toggle showing the kana and answer
-        // If the help hint is displayed, disable it, and reset it to preferred user settings (stored in args)
-        // If the hint is not displayed, enable it, ignoring the user settings
+        // If user presses tab, toggle between off, showing kana, showing both kana and answer
         else if (event == Event::Tab) {
-            display_kana = help_hint ? args.display_kana : true;
-            display_answer = help_hint ? args.display_answer : true;
-            help_hint = !help_hint;
+            if (help_hint == HintState::Off) {
+                help_hint = HintState::Partial;
+                display_kana = true;
+                display_answer = args.display_answer;  // User preference
+            }
+            else if (help_hint == HintState::Partial) {
+                help_hint = HintState::Full;
+                display_kana = true;
+                display_answer = true;
+            }
+            else {
+                help_hint = HintState::Off;
+                display_kana = args.display_kana;      // User preference
+                display_answer = args.display_answer;  // User preference
+            }
+
+            // } else {
+            //     help_hint = HintState::Off;
+            // }
+            // display_kana = help_hint ? args.display_kana : true;
+            // display_answer = help_hint ? args.display_answer : true;
+            // help_hint = !help_hint;
             return true;
         }
         // If user presses Enter, check the answer
@@ -258,9 +282,9 @@ void app::run(
             user_input.clear();
 
             // Reset kana and answer to preferred user settings
-            display_kana = args.display_kana;
-            display_answer = args.display_answer;
-            help_hint = false;
+            help_hint = HintState::Off;
+            display_kana = args.display_kana;      // User preference
+            display_answer = args.display_answer;  // User preference
 
             // Get a new random entry from the vocabulary
             current_entry = vocab->get_entry();
