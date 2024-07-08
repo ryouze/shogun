@@ -88,6 +88,11 @@ Follow these steps to build the project:
     make -j$(nproc)
     ```
 
+    ```bash
+    # 8-core M1 Pro on MacOS
+    make -j8
+    ```
+
 After successful compilation, you can run the program using `./shogun`.
 
 The mode is set to `Release` by default. To build in `Debug` mode, use `cmake -DCMAKE_BUILD_TYPE=Debug ..`.
