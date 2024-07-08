@@ -19,7 +19,7 @@ namespace json {
  *
  * @details Documentation: https://github.com/nlohmann/json
  */
-using Json = nlohmann::json;
+using json = nlohmann::json;
 
 /**
  * @brief Base class for exceptions raised during I/O operations.
@@ -70,7 +70,7 @@ class JsonParseError : public IOError {
  *
  * @note You can catch all exceptions listed above with core::json::IOError.
  */
-[[nodiscard]] Json load(const std::string &input_path);
+[[nodiscard]] json load(const std::string &input_path);
 
 // /**
 //  * @brief Save a JSON object to a file on disk.
@@ -86,7 +86,7 @@ class JsonParseError : public IOError {
 //  * @note You can catch all exceptions listed above with core::json::IOError.
 //  */
 // void save(
-//     const Json &data,
+//     const json &data,
 //     const std::string &output_path,
 //     const bool overwrite = false);
 

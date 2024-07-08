@@ -29,7 +29,7 @@ namespace {
 
     {
         // Load the JSON file from disk, passing any Exceptions to the caller
-        const core::json::Json data = core::json::load(input_path);
+        const core::json::json data = core::json::load(input_path);
 
         // Convert JSON to a vector of Entry objects
 

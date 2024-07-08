@@ -10,7 +10,7 @@
 
 #include "json.hpp"
 
-core::json::Json core::json::load(const std::string &input_path)
+core::json::json core::json::load(const std::string &input_path)
 {
     // Error: Doesn't exist
     if (!std::filesystem::exists(input_path)) {
@@ -27,9 +27,9 @@ core::json::Json core::json::load(const std::string &input_path)
         }
 
         // Return the parsed JSON
-        return core::json::Json::parse(file);
+        return core::json::json::parse(file);
     }
-    catch (const core::json::Json::exception &e) {
+    catch (const core::json::json::exception &e) {
         throw core::json::JsonParseError(input_path + " (" + std::string(e.what()) + ")");
     }
     catch (const std::exception &e) {
@@ -38,7 +38,7 @@ core::json::Json core::json::load(const std::string &input_path)
 }
 
 // void core::json::save(
-//     const core::json::Json &data,
+//     const core::json::json &data,
 //     const std::string &output_path,
 //     const bool overwrite)
 // {
@@ -65,7 +65,7 @@ core::json::Json core::json::load(const std::string &input_path)
 //             throw std::runtime_error("Failed to write JSON to file");
 //         }
 //     }
-//     catch (const core::json::Json::exception &e) {
+//     catch (const core::json::json::exception &e) {
 //         throw core::json::JsonParseError(output_path + " (" + std::string(e.what()) + ")");
 //     }
 //     catch (const std::exception &e) {
