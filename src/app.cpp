@@ -256,8 +256,11 @@ void app::run(
                 display_kana = args.display_kana;      // User preference
                 display_answer = args.display_answer;  // User preference
                 break;
-            default:
-                throw std::runtime_error("Invalid hint state, must be 'Off', 'Partial', or 'Full'");
+            default:  // Invalid -> Off
+                help_hint = HintState::Off;
+                display_kana = args.display_kana;      // User preference
+                display_answer = args.display_answer;  // User preference
+                break;
             }
             return true;
         }
