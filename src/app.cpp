@@ -11,7 +11,6 @@
 #include <utility>    // for std::move
 #include <vector>     // for std::vector
 
-#include <argparse/argparse.hpp>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
@@ -19,6 +18,7 @@
 #include "app.hpp"
 #include "core/filepaths.hpp"
 #include "io/kanji.hpp"
+#include "utils/args.hpp"
 #include "utils/string.hpp"
 
 namespace {
@@ -83,70 +83,6 @@ struct HistoryEntry {
 };
 
 /**
- * @brief Private helper struct that represents command-line arguments.
- *
- * @note These values shall be set by the command-line argument parser.
- */
-struct Args {
-    /**
-     * @brief Display the kana transcription of the kanji (e.g., "true").
-     */
-    bool display_kana;
-
-    /**
-     * @brief Display the correct answer (e.g., "true").
-     */
-    bool display_answer;
-};
-
-/**
- * @brief Process command-line arguments and return them as a struct.
- *
- * @param argc Number of command-line arguments (e.g., "2").
- * @param argv Array of command-line arguments (e.g., {"./bin", "-h"}).
- *
- * @return Parsed command-line arguments.
- *
- * @throws ArgParseError If failed to process command-line arguments. A help message with usage, description, and examples is returned.
- */
-[[nodiscard]] Args process_args(
-    const int argc,
-    char **argv)
-{
-    // Initialize arguments
-    Args args;
-
-    // Setup command-line argument parser (disable version and enable help only)
-    argparse::ArgumentParser program("shogun", "", argparse::default_arguments::help);
-    program.add_description("Learn Japanese kanji in the terminal.");
-
-    // If "--kana" argument was passed, enable display of the kana transcriptions of the kanji
-    program.add_argument("--kana")
-        .help("display the kana transcription of the kanji")
-        .store_into(args.display_kana);
-
-    // If "--answer" argument was passed, enable display of the correct answer
-    program.add_argument("--answer")
-        .help("display the correct answer")
-        .store_into(args.display_answer);
-
-    // // If "--debug" argument was passed, enable debug mode
-    // program.add_argument("--debug")
-    //     .store_into(args.debug)
-    //     .hidden();
-
-    try {
-        // Parse command-line arguments
-        program.parse_args(argc, argv);
-        return args;
-    }
-    catch (const std::exception &err) {
-        // Re-throw the exception as an ArgParseError with the help message
-        throw app::ArgParseError(std::string(err.what()) + "\n\n" + program.help().str());
-    }
-}
-
-/**
  * @brief Check if the user's input is similar enough to the correct answer based on the global similarity threshold.
  *
  * @param user_input User's input (e.g., "to eat").
@@ -192,7 +128,7 @@ void app::run(
     using namespace ftxui;
 
     // Process command-line arguments (this might throw a ArgParseError)
-    const Args args = process_args(argc, argv);
+    const utils::args::Args args = utils::args::Args(argc, argv);
 
     // Initialize variables
     std::atomic<bool> is_loading = true;           // Atomic allows for thread-safe access

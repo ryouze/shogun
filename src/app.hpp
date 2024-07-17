@@ -6,19 +6,7 @@
 
 #pragma once
 
-#include <stdexcept>  // for std::runtime_error
-#include <string>     // for std::string
-
 namespace app {
-
-/**
- * @brief Base class for exceptions raised by command-line argument parser. A help message with usage, description, and examples must be included.
- */
-class ArgParseError : public std::runtime_error {
-  public:
-    explicit ArgParseError(const std::string &message)
-        : std::runtime_error(message) {}
-};
 
 /**
  * @brief Parse command-line arguments, load the vocabulary JSON file from disk and start the interactive UI.

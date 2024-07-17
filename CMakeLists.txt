@@ -56,6 +56,7 @@ add_executable(${PROJECT_NAME}
   src/core/json.cpp
   src/io/kanji.cpp
   src/main.cpp
+  src/utils/args.cpp
   src/utils/string.cpp
 )
 
