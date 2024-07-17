@@ -13,8 +13,6 @@ namespace app {
  *
  * @param argc Number of command-line arguments (e.g., "2").
  * @param argv Array of command-line arguments (e.g., {"./bin", "-h"}).
- *
- * @note Exceptions thrown by the JSON library (e.g., FileNotFoundError) are caught and displayed inside the UI loop.
  */
 void run(
     const int argc,
