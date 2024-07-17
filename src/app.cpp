@@ -119,7 +119,7 @@ void app::run(
     std::size_t history_counter = 1;
     bool display_kana = args.display_kana;
     bool display_answer = args.display_answer;
-    HintState help_hint = HintState::Off;
+    HintState hint_state = HintState::Off;
 
     // Define screen to be fullscreen
     ScreenInteractive screen = ScreenInteractive::Fullscreen();
@@ -130,27 +130,27 @@ void app::run(
 
     // Define user input component and event handler
     const auto input_component = Input(&user_input, "英語");
-    const auto input_with_enter = CatchEvent(input_component, [&](const Event &event) {
+    const auto input_with_events = CatchEvent(input_component, [&](const Event &event) {
         // If user presses tab, toggle between off, showing kana, showing both kana and answer
         if (event == Event::Tab) {
-            switch (help_hint) {
+            switch (hint_state) {
             case HintState::Off:  // Off -> Partial
-                help_hint = HintState::Partial;
+                hint_state = HintState::Partial;
                 display_kana = true;
                 display_answer = args.display_answer;  // User preference
                 break;
             case HintState::Partial:  // Partial -> Full
-                help_hint = HintState::Full;
+                hint_state = HintState::Full;
                 display_kana = true;
                 display_answer = true;
                 break;
             case HintState::Full:  // Full -> Off
-                help_hint = HintState::Off;
+                hint_state = HintState::Off;
                 display_kana = args.display_kana;      // User preference
                 display_answer = args.display_answer;  // User preference
                 break;
             default:  // Invalid -> Off
-                help_hint = HintState::Off;
+                hint_state = HintState::Off;
                 display_kana = args.display_kana;      // User preference
                 display_answer = args.display_answer;  // User preference
                 break;
@@ -175,7 +175,7 @@ void app::run(
             user_input.clear();
 
             // Reset kana and answer to preferred user settings
-            help_hint = HintState::Off;
+            hint_state = HintState::Off;
             display_kana = args.display_kana;      // User preference
             display_answer = args.display_answer;  // User preference
 
@@ -212,7 +212,7 @@ void app::run(
                                                   text("漢字：" + current_entry.kanji + (display_kana ? "（" + current_entry.kana + "）" : "") + (display_answer ? "= " + current_entry.translation + "" : "")) | bold | size(WIDTH, EQUAL, 90),
                                                   text("例文：" + current_entry.sentence_jp) | bold | size(WIDTH, EQUAL, 90),
                                                   text("POS: " + current_entry.pos) | bold | size(WIDTH, EQUAL, 90),
-                                                  input_with_enter->Render() | bold | bgcolor(Color::Magenta) | border,
+                                                  input_with_events->Render() | bold | bgcolor(Color::Magenta) | border,
                                               }) | border |
                                                   center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
                                               separator(),
@@ -225,7 +225,7 @@ void app::run(
 
     // Main loop with a container to handle focus
     const auto main_container = Container::Vertical({
-        input_with_enter,
+        input_with_events,
     });
 
     const auto main_app = Renderer(main_container, [&] {
