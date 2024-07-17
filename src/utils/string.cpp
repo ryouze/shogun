@@ -88,8 +88,9 @@ double utils::string::calculate_similarity(
     std::vector<std::size_t> current_row(str2_lower_len + 1);
 
     // Fill the first row with increasing numbers
-    for (std::size_t j = 0; j <= str2_lower_len; ++j)
+    for (std::size_t j = 0; j <= str2_lower_len; ++j) {
         previous_row[j] = j;
+    }
 
     // Compute the Levenshtein distance
     for (std::size_t i = 1; i <= str1_lower_len; ++i) {
