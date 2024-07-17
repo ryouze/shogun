@@ -2,14 +2,10 @@
  * @file app.cpp
  */
 
-#include <atomic>     // for std::atomic
-#include <cstddef>    // for std::size_t
-#include <exception>  // for std::exception_ptr, std::rethrow_exception, std::exception, std::current_exception
-#include <memory>     // for std::unique_ptr, std::make_unique
-#include <string>     // for std::string, std::to_string
-#include <thread>     // for std::thread
-#include <utility>    // for std::move
-#include <vector>     // for std::vector
+#include <cstddef>  // for std::size_t
+#include <string>   // for std::string, std::to_string
+#include <utility>  // for std::move
+#include <vector>   // for std::vector
 
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
@@ -117,15 +113,10 @@ void app::run(
     const core::args::Args args = core::args::Args(argc, argv);
 
     // Initialize variables
-    std::atomic<bool> is_loading = true;           // Atomic allows for thread-safe access
-    std::unique_ptr<io::kanji::Vocabulary> vocab;  // Must be a pointer to allow for initialization in a separate thread
-    std::exception_ptr load_exception;             // Exception pointer to capture any exceptions thrown during loading of vocab
     io::kanji::Entry current_entry;
     std::string user_input;
     std::vector<HistoryEntry> history;
     std::size_t history_counter = 1;
-
-    // Initialize hint flags
     bool display_kana = args.display_kana;
     bool display_answer = args.display_answer;
     HintState help_hint = HintState::Off;
@@ -133,30 +124,15 @@ void app::run(
     // Define screen to be fullscreen
     ScreenInteractive screen = ScreenInteractive::Fullscreen();
 
-    // Define loading UI
-    const auto loading_renderer = Renderer([&] {
-        return vbox({
-                   // Title
-                   text("将軍") | center | bold,
-                   separator(),
-                   // Loading JSON: <filepath>
-                   vbox({
-                       text("Loading JSON: " + core::filepaths::vocabulary) | bold | center,
-                   }) |
-                       center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
-               }) |
-               border | bgcolor(Color::Grey11) | center;
-    });
+    // Load vocabulary from disk
+    io::kanji::Vocabulary vocab = io::kanji::Vocabulary(core::filepaths::vocabulary);
+    current_entry = vocab.get_entry();  // Get a random entry from the vocabulary
 
     // Define user input component and event handler
     const auto input_component = Input(&user_input, "英語");
     const auto input_with_enter = CatchEvent(input_component, [&](const Event &event) {
-        // If loading, do nothing
-        if (is_loading) {
-            return false;
-        }
         // If user presses tab, toggle between off, showing kana, showing both kana and answer
-        else if (event == Event::Tab) {
+        if (event == Event::Tab) {
             switch (help_hint) {
             case HintState::Off:  // Off -> Partial
                 help_hint = HintState::Partial;
@@ -204,7 +180,7 @@ void app::run(
             display_answer = args.display_answer;  // User preference
 
             // Get a new random entry from the vocabulary
-            current_entry = vocab->get_entry();
+            current_entry = vocab.get_entry();
             return true;
         }
         // Otherwise, do nothing
@@ -215,35 +191,6 @@ void app::run(
 
     // Main renderer for the main application screen
     const auto main_renderer = Renderer([&] {
-                                   // If loading, render the loading screen
-                                   if (is_loading) {
-                                       // If an exception occurred, render the error screen
-                                       if (load_exception) {
-                                           try {
-                                               std::rethrow_exception(load_exception);
-                                           }
-                                           catch (const std::exception &e) {
-                                               return vbox({
-                                                          // Title
-                                                          text("将軍") | center | bold,
-                                                          separator(),
-                                                          // Error message, e.g., FileNotFoundError
-                                                          vbox({
-                                                              text(std::string(e.what())) | bold | center,
-                                                          }) |
-                                                              center | size(WIDTH, EQUAL, 90) | flex_grow | hcenter,
-                                                      }) |
-                                                      border | bgcolor(Color::Red) | center;
-                                           }
-                                       }
-                                       // Otherwise, render the loading screen
-                                       else {
-                                           return loading_renderer->Render();
-                                       }
-                                   }
-
-                                   // Otherwise, render the main application screen
-
                                    // Create UI elements for the history dynamically
                                    std::vector<Element> history_elements;
                                    history_elements.reserve(5);  // Reserve space for 5 elements
@@ -275,27 +222,6 @@ void app::run(
                                           border | bgcolor(Color::Grey11) | center;
                                }) |
                                bgcolor(Color::Pink1) | color(Color::Pink1);
-
-    // Run the loading thread
-    std::thread load_thread([&]() {
-        try {
-            // Load JSON file from disk
-            vocab = std::make_unique<io::kanji::Vocabulary>(core::filepaths::vocabulary);
-            // Get random entry from the vocabulary
-            current_entry = vocab->get_entry();
-            is_loading = false;
-        }
-        // Capture any exception, e.g., FileNotFoundError
-        catch (...) {
-            load_exception = std::current_exception();
-        }
-        // Set loading flag to false and post a custom event to trigger the screen update
-
-        screen.PostEvent(Event::Custom);
-    });
-
-    // Detach the thread to avoid blocking
-    load_thread.detach();
 
     // Main loop with a container to handle focus
     const auto main_container = Container::Vertical({
