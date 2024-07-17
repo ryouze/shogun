@@ -40,8 +40,9 @@ class Args final {
      *
      * @throws ArgsParseError If failed to process command-line arguments. A help message with usage, description, and examples is returned.
      */
-    explicit Args(const int argc,
-                  char **argv);
+    explicit Args(
+        const int argc,
+        char **argv);
 
     /**
      * @brief Display the kana transcription of the kanji (e.g., "true").
