@@ -7,8 +7,8 @@
 
 #include "args.hpp"
 
-utils::args::Args::Args(const int argc,
-                        char **argv)
+core::args::Args::Args(const int argc,
+                       char **argv)
 {
     // Setup command-line argument parser (disable version and enable help only)
     argparse::ArgumentParser program("shogun", "", argparse::default_arguments::help);

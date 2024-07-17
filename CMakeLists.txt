@@ -52,11 +52,11 @@ endif()
 # Add executable target
 add_executable(${PROJECT_NAME}
   src/app.cpp
+  src/core/args.cpp
   src/core/filepaths.cpp
   src/core/json.cpp
   src/io/kanji.cpp
   src/main.cpp
-  src/utils/args.cpp
   src/utils/string.cpp
 )
 

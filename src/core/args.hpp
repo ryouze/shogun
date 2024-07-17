@@ -11,7 +11,7 @@
 
 #include <argparse/argparse.hpp>
 
-namespace utils {
+namespace core {
 namespace args {
 
 /**
@@ -59,4 +59,4 @@ class Args final {
 };
 
 }  // namespace args
-}  // namespace utils
+}  // namespace core

@@ -16,15 +16,37 @@
 #include <ftxui/dom/elements.hpp>
 
 #include "app.hpp"
+#include "core/args.hpp"
 #include "core/filepaths.hpp"
 #include "io/kanji.hpp"
-#include "utils/args.hpp"
 #include "utils/string.hpp"
 
 namespace {
 
 /**
- * @brief Private helper struct that represents a single history entry.
+ * @brief Private helper enum that represents the state of the hint display.
+ *
+ * This enum is used to control the visibility and amount of hint information displayed to the user.
+ */
+enum class HintState : unsigned char {
+    /**
+     * @brief No hint is displayed.
+     */
+    Off,
+
+    /**
+     * @brief Only the kana transcription is displayed as a hint.
+     */
+    Partial,
+
+    /**
+     * @brief Both the kana transcription and the correct answer are displayed as hints.
+     */
+    Full
+};
+
+/**
+ * @struct Private helper struct that represents a single history entry.
  */
 struct HistoryEntry {
     /**
@@ -87,7 +109,7 @@ struct HistoryEntry {
  *
  * @param user_input User's input (e.g., "to eat").
  * @param correct_answer Correct answer (e.g., "to eat").
- * @param min_similarity Minimum similarity between user input and correct answer as a percentage (0.0 - 1.0).
+ * @param min_similarity Minimum similarity between user input and correct answer (default: 0.6).
  *
  * @return True if the input matches the correct answer, otherwise false.
  *
@@ -128,7 +150,7 @@ void app::run(
     using namespace ftxui;
 
     // Process command-line arguments (this might throw a ArgParseError)
-    const utils::args::Args args = utils::args::Args(argc, argv);
+    const core::args::Args args = core::args::Args(argc, argv);
 
     // Initialize variables
     std::atomic<bool> is_loading = true;           // Atomic allows for thread-safe access
@@ -142,11 +164,6 @@ void app::run(
     // Initialize hint flags
     bool display_kana = args.display_kana;
     bool display_answer = args.display_answer;
-    enum class HintState {
-        Off,      // No hint
-        Partial,  // Kana only
-        Full      // Kana and answer
-    };
     HintState help_hint = HintState::Off;
 
     // Define screen to be fullscreen
