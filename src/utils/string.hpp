@@ -12,18 +12,20 @@ namespace utils {
 namespace string {
 
 /**
- * @brief Calculate the similarity between two strings using the Levenshtein distance.
+ * @brief Check if the user's input is similar enough to the correct answer based on the global similarity threshold.
  *
- * @param str1 First string (e.g., "HELLO World!").
- * @param str2 Second string (e.g., "hello world").
+ * @param user_input User's input (e.g., "to eat").
+ * @param correct_answer Correct answer (e.g., "to eat").
+ * @param min_similarity Minimum similarity between user input and correct answer (default: 0.6).
  *
- * @return Similarity score between 0.0 and 1.0 (e.g., "0.916667").
+ * @return True if the input matches the correct answer, otherwise false.
  *
- * @note Trailing whitespace will be removed and strings will be converted to lowercase before comparison.
+ * @note If the initial check fails, the function will retry by stripping the correct answer up to the first comma and comparing again (e.g., "to eat, to drink" -> "to eat").
  */
-[[nodiscard]] double calculate_similarity(
-    const std::string &str1,
-    const std::string &str2);
+[[nodiscard]] bool is_answer_correct(
+    const std::string &user_input,
+    const std::string &correct_answer,
+    const double min_similarity = 0.6);
 
 }  // namespace string
 }  // namespace utils

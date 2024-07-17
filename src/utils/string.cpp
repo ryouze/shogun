@@ -14,7 +14,7 @@
 namespace {
 
 /**
- * @brief Remove leading and trailing whitespace from string.
+ * @brief Private helper function to remove leading and trailing whitespace from a string.
  *
  * @param str String to trim (e.g., "  hello  ").
  *
@@ -54,16 +54,24 @@ namespace {
 
     // Convert the string to lowercase
     std::transform(lower_str.cbegin(), lower_str.cend(), lower_str.begin(),
-                   // std::to_lower expects an int, so we cast the char to an unsigned char
+                   // Since std::to_lower expects an "int", we cast "char" to "unsigned char"
                    [](unsigned char c) { return std::tolower(c); });
 
     // Return the lowercase string (RVO)
     return lower_str;
 }
 
-}  // namespace
-
-double utils::string::calculate_similarity(
+/**
+ * @brief Private helper function to calculate the similarity between two strings using the Levenshtein distance.
+ *
+ * @param str1 First string (e.g., "HELLO World!").
+ * @param str2 Second string (e.g., "hello world").
+ *
+ * @return Similarity score between 0.0 and 1.0 (e.g., "0.916667").
+ *
+ * @note Trailing whitespace will be removed and strings will be converted to lowercase before comparison.
+ */
+[[nodiscard]] double calculate_similarity(
     const std::string &str1,
     const std::string &str2)
 {
@@ -108,4 +116,31 @@ double utils::string::calculate_similarity(
     // Compute the similarity score based on the Levenshtein distance and the length of the longest string
     const std::size_t lev_distance = previous_row[str2_lower_len];
     return 1.0 - static_cast<double>(lev_distance) / static_cast<double>(std::max(str1_lower_len, str2_lower_len));
+}
+
+}  // namespace
+
+bool utils::string::is_answer_correct(
+    const std::string &user_input,
+    const std::string &correct_answer,
+    const double min_similarity)
+{
+    // Calculate the similarity between the user's input and the correct answer using the Levenshtein distance
+    const double similarity = calculate_similarity(user_input, correct_answer);
+
+    // If the similarity is above the threshold, mark the answer as correct
+    bool correct = similarity >= min_similarity;
+
+    // Fallback: If not correct, strip everything from the correct answer up to the first comma and check again
+    // This is useful when multiple translations are provided (e.g., "to eat, to drink"); we only check the first translation (e.g., "to eat")
+    if (!correct) {
+        const std::size_t comma_pos = correct_answer.find(',');
+        if (comma_pos != std::string::npos) {
+            const std::string stripped_translation = correct_answer.substr(0, comma_pos);
+            const double stripped_similarity = calculate_similarity(user_input, stripped_translation);
+            correct = stripped_similarity >= min_similarity;
+        }
+    }
+
+    return correct;
 }
