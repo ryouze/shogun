@@ -48,8 +48,8 @@ namespace {
 
     // If enabled, shuffle the data in random order
     if (shuffle) {
-        static std::random_device rd;
-        static std::mt19937 gen(rd());  // Mersenne Twister random number generator (32-bit)
+        std::random_device rd;
+        std::mt19937 gen(rd());  // Mersenne Twister random number generator (32-bit)
         std::shuffle(entries.begin(), entries.end(), gen);
     }
 
