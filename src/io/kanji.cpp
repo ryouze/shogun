@@ -27,6 +27,9 @@ namespace {
     // Initialize vector of Entry objects
     std::vector<io::kanji::Entry> entries;
 
+    // Allocate for 10k entries
+    entries.reserve(10000);
+
     {
         // Load the JSON file from disk, passing any Exceptions to the caller
         const core::json::json data = core::json::load(input_path);
