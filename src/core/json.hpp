@@ -17,7 +17,7 @@ namespace json {
 /**
  * @brief Alias for "nlohmann::json".
  *
- * @details Documentation: https://github.com/nlohmann/json
+ * @note Documentation: https://github.com/nlohmann/json
  */
 using json = nlohmann::json;
 

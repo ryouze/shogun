@@ -59,11 +59,6 @@ core::json::json core::json::load(const std::string &input_path)
 
 //         // Write the JSON object to the file with 4 spaces indentation and trailing newline
 //         file << data.dump(4) << '\n';
-
-//         // Error: Failed to write JSON
-//         if (file.fail()) {
-//             throw std::runtime_error("Failed to write JSON to file");
-//         }
 //     }
 //     catch (const core::json::json::exception &e) {
 //         throw core::json::JsonParseError(output_path + " (" + std::string(e.what()) + ")");
